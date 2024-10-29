@@ -1,2 +1,21 @@
 # Chat-App
-A fully function chat app that can send and receive messages, add and block people, and create an account for the user
+TODO:
+User class:
+- addFriend(User friend);
+- removeFriend(User Friend);
+- blockUser(User user);
+- unblockUser(User use);
+- acceptFriendRequest();
+- rejectFriendRequest();
+- createUser();
+- setPassword(String newPasswd);
+ChatDatabase:
+- modifyUser();
+- createUser();
+- removeUser();
+- constructor for the database;
+- fields:
+  - User[] userList;
+  - String[] usernames;
+  - String[] passwords;
+-  Read/Write Functions
