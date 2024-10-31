@@ -20,3 +20,5 @@ ChatDatabase:
   - String[] passwords;
 -  Read/Write Functions
 -  Need interface for every class
+
+Also a "RunLocalTest.java" file
