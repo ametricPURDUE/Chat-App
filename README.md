@@ -19,3 +19,4 @@ ChatDatabase:
   - String[] usernames;
   - String[] passwords;
 -  Read/Write Functions
+-  Need interface for every class
