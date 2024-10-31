@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 /**
  * The class that handles all functions relating to specific users
  * Purdue University -- Fall 2024 -- CS18000 -- Team Project
@@ -8,8 +9,8 @@
 public class User {
     private String name;
     private String username;
+    private ArrayList <User> friends = new ArrayList<>();
     private User[] blocked = new User[0];
-    private User[] friends = new User[0];
     private int age;
 
     public User(String name, String username, int age) {
@@ -42,12 +43,38 @@ public class User {
         this.blocked = blocked;
     }
 
-    public User[] getFriends() {
+    public ArrayList<User> getFriends() {
         return friends;
     }
 
-    public void setFriends(User[] friends) {
+    public void setFriends(ArrayList<User> friends) {
         this.friends = friends;
+    }
+
+    public void addFriend(User user) {
+        friends.add(user);
+    }
+
+    public void removeFriend(User user) {
+        for (int i = 0; i < friends.size(); i++) {
+            if (friends.get(i).equals(user)) {
+                friends.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public boolean equals(User user) {
+        if (!name.equals(user.name)) {
+            return false;
+        }
+        if (!username.equals(user.username)) {
+            return false;
+        }
+        if (age != user.age) {
+            return false;
+        }
+        return true;
     }
 
     public int getAge() {
