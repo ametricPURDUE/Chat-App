@@ -17,4 +17,44 @@ public class User {
         this.username = username;
         this.age = age;
     }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public User[] getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(User[] blocked) {
+        this.blocked = blocked;
+    }
+
+    public User[] getFriends() {
+        return friends;
+    }
+
+    public void setFriends(User[] friends) {
+        this.friends = friends;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 }
