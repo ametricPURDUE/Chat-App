@@ -73,4 +73,50 @@ public class ChatDatabase {
             return false;
         }
     }
+
+    //set of write functions;
+
+    /**
+     * takes each item in usernames and appends it to "usernames.txt" as its own line
+     * @return - returns true if successful and false if not
+     */
+    public boolean writeUsernames() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("usernames.txt"))) {
+            for(String username: usernames) {
+                bfw.write(username);
+                bfw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * takes each item in passwords and appends it to "passwords.txt" as its own line
+     * @return - returns true if successful and false if not
+     */
+    public boolean writePasswords() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("passwords.txt"))) {
+            for(String password: passwords) {
+                bfw.write(password);
+                bfw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public void printUsernames() {
+        for (String user: usernames) {
+            System.out.println(user);
+        }
+    }
+
+    public void printPasswords() {
+        for (String passwd: passwords) {
+            System.out.println(passwd);
+        }
+    }
 }
