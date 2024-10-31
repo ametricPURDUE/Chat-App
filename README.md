@@ -22,7 +22,6 @@ ChatDatabase:
   - User[] userList;
   - String[] usernames;
   - String[] passwords;
--  Read/Write Functions   AJ
 -  Need interface for every class
 
 Also a "RunLocalTest.java" file  AJ
