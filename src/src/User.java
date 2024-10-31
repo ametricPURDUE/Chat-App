@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author AJ Metrick, Edward Ju, Nolan Shultz, Parshawn Haynes, Pranav Sangani
  * @version October 29, 2024
  */
-public class User {
+public class User implements userTemplate{
     private String name;
     private String username;
     private ArrayList <User> friends = new ArrayList<>();
