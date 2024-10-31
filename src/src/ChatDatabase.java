@@ -73,4 +73,70 @@ public class ChatDatabase {
             return false;
         }
     }
+    
+    public boolean createUser(String data) {
+        synchronized(MAIN_LOCK) {
+            String[] userData = data.split(",");
+            if (userData.length != 2|| userData[0].isEmpty() || userData[1].isEmpty()) {
+                return false;  
+            }
+            String newUsername = userData[0];
+            String newPassword = userData[1];
+
+            for (String username : usernames) {
+                if (username.equals(newUsername)) {
+                    return false;  
+                }
+            }
+            User newUser = new User(newUsername, newPassword);
+            userList = Arrays.copyOf(userList, userList.length + 1);
+            userList[userList.length - 1] = newUser;
+            appendUsername(newUsername);
+            appendPassword(newPassword);
+            return true;
+        }
+    }
+    public boolean removeUser(User user) {
+        synchronized(MAIN_LOCK) {
+            int index = -1;
+            for (int i = 0; i < userList.length; i++) {
+                if (userList[i].equals(user)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                return false;  
+            }
+            User[] newUserList = new User[userList.length - 1];
+            System.arraycopy(userList, 0, newUserList, 0, index);
+            System.arraycopy(userList, index + 1, newUserList, index, userList.length - index - 1);
+            userList = newUserList;
+            removeUsername(user.getUsername());
+            removePassword(user.getPassword());
+            return true;
+    
+        }   
+    }
+    private void removeUsername(String username) {
+        String[] newUsernames = new String[usernames.length - 1];
+        int index = 0;
+        for (String existingUsername : usernames) {
+            if (!existingUsername.equals(username)) {
+                newUsernames[index++] = existingUsername;
+            }
+        }
+        usernames = newUsernames;
+    }
+
+    private void removePassword(String password) {
+        String[] newPasswords = new String[passwords.length - 1];
+        int index = 0;
+        for (String existingPassword : passwords) {
+            if (!existingPassword.equals(password)) {
+                newPasswords[index++] = existingPassword;
+            }
+        }
+        passwords = newPasswords;
+    }
 }
