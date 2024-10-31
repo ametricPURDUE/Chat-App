@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.Arrays;
+import java.util.ArrayList;
 /**
  * The database for our message app, handles the modification of users as well as other tasks
  * Purdue University -- Fall 2024 -- CS18000 -- Team Project
@@ -8,29 +9,18 @@ import java.util.Arrays;
  * @version October 29, 2024
  */
 public class ChatDatabase implements ChatDatabaseInterface {
-    private static User[] userList;
-    private static String[] usernames;
-    private static String[] passwords;
+    private static ArrayList<User> userList;
+    private static ArrayList<String> usernames;
+    private static ArrayList<String> passwords;
     public static final Object MAIN_LOCK = new Object();
 
 
     public ChatDatabase() {
         synchronized(MAIN_LOCK) {
-            userList = new User[0];
-            usernames = new String[0];
-            passwords = new String[0];
+            userList = new ArrayList<User>();
+            usernames = new ArrayList<String>();
+            passwords = new ArrayList<String>();
         }
-    }
-
-    //set of read functions
-
-    /**
-     * adds a new username to the usernames list
-     * @param newUsername - the new username to be added
-     */
-    public void appendUsername(String newUsername) {
-        usernames = Arrays.copyOf(usernames, usernames.length + 1);
-        usernames[usernames.length - 1] = newUsername;
     }
 
     /**
@@ -41,21 +31,12 @@ public class ChatDatabase implements ChatDatabaseInterface {
         try(BufferedReader bfr = new BufferedReader(new FileReader("usernames.txt"))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                appendUsername(line);
+                usernames.add(line);
             }
             return true;
         } catch (IOException e) {
             return false;
         }
-    }
-
-    /**
-     * adds a new password to the passwords list
-     * @param newPassword - the new password to be added
-     */
-    public void appendPassword(String newPassword) {
-        passwords = Arrays.copyOf(passwords, passwords.length + 1);
-        passwords[passwords.length - 1] = newPassword;
     }
 
     /**
@@ -66,17 +47,14 @@ public class ChatDatabase implements ChatDatabaseInterface {
         try (BufferedReader bfr = new BufferedReader(new FileReader("passwords.txt"))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                appendPassword(line);
+                passwords.add(line);
             }
             return true;
         } catch (IOException e) {
             return false;
         }
     }
-<<<<<<< HEAD
-
     //set of write functions;
-
     /**
      * takes each item in usernames and appends it to "usernames.txt" as its own line
      * @return - returns true if successful and false if not
@@ -109,47 +87,29 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
-    public void printUsernames() {
-        for (String user: usernames) {
-            System.out.println(user);
-        }
-    }
-
-    public void printPasswords() {
-        for (String passwd: passwords) {
-            System.out.println(passwd);
-        }
-    }
-}
-=======
-    
     public boolean createUser(String data) {
-        synchronized(MAIN_LOCK) {
-            String[] userData = data.split(",");
-            if (userData.length != 2|| userData[0].isEmpty() || userData[1].isEmpty()) {
-                return false;  
-            }
-            String newUsername = userData[0];
-            String newPassword = userData[1];
-
-            for (String username : usernames) {
-                if (username.equals(newUsername)) {
-                    return false;  
-                }
-            }
-            User newUser = new User(newUsername, newPassword);
-            userList = Arrays.copyOf(userList, userList.length + 1);
-            userList[userList.length - 1] = newUser;
-            appendUsername(newUsername);
-            appendPassword(newPassword);
-            return true;
+        String[] userData = data.split(",");
+        if (userData.length < 3) {
+            return false;
         }
+        int newAge = -1;
+        try {
+            newAge = Integer.parseInt(userData[2]);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if (newAge == -1) {
+            return false;
+        }
+        userList.add(new User(userData[0], userData[1], newAge));
+        return true;
     }
+
     public boolean removeUser(User user) {
         synchronized(MAIN_LOCK) {
             int index = -1;
-            for (int i = 0; i < userList.length; i++) {
-                if (userList[i].equals(user)) {
+            for (int i = 0; i < userList.size(); i++) {
+                if (userList.get(i).equals(user)) {
                     index = i;
                     break;
                 }
@@ -157,36 +117,11 @@ public class ChatDatabase implements ChatDatabaseInterface {
             if (index == -1) {
                 return false;  
             }
-            User[] newUserList = new User[userList.length - 1];
-            System.arraycopy(userList, 0, newUserList, 0, index);
-            System.arraycopy(userList, index + 1, newUserList, index, userList.length - index - 1);
-            userList = newUserList;
-            removeUsername(user.getUsername());
-            removePassword(user.getPassword());
+            userList.remove(index);
+            usernames.remove(index);
+            passwords.remove(index);
             return true;
     
         }   
     }
-    private void removeUsername(String username) {
-        String[] newUsernames = new String[usernames.length - 1];
-        int index = 0;
-        for (String existingUsername : usernames) {
-            if (!existingUsername.equals(username)) {
-                newUsernames[index++] = existingUsername;
-            }
-        }
-        usernames = newUsernames;
-    }
-
-    private void removePassword(String password) {
-        String[] newPasswords = new String[passwords.length - 1];
-        int index = 0;
-        for (String existingPassword : passwords) {
-            if (!existingPassword.equals(password)) {
-                newPasswords[index++] = existingPassword;
-            }
-        }
-        passwords = newPasswords;
-    }
 }
->>>>>>> 395b297d95d7b2945648ffa571c54b05c9732ab8
