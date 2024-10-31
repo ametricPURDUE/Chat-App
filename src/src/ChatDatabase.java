@@ -7,7 +7,7 @@ import java.util.Arrays;
  * @author AJ Metrick, Edward Ju, Nolan Shultz, Parshawn Haynes, Pranav Sangani
  * @version October 29, 2024
  */
-public class ChatDatabase {
+public class ChatDatabase implements ChatDatabaseInterface {
     private static User[] userList;
     private static String[] usernames;
     private static String[] passwords;
