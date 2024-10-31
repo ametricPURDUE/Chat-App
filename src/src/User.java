@@ -10,7 +10,7 @@ public class User {
     private String name;
     private String username;
     private ArrayList <User> friends = new ArrayList<>();
-    private User[] blocked = new User[0];
+    private ArrayList <User> blocked = new ArrayList<>();
     private int age;
 
     public User(String name, String username, int age) {
@@ -35,12 +35,25 @@ public class User {
         this.username = username;
     }
 
-    public User[] getBlocked() {
+    public ArrayList<User> getBlocked() {
         return blocked;
     }
 
-    public void setBlocked(User[] blocked) {
+    public void setBlocked(ArrayList<User> blocked) {
         this.blocked = blocked;
+    }
+
+    public void blockUser(User user) {
+        blocked.add(user);
+    }
+
+    public void unblockUser(User user) {
+        for(int i = 0; i < blocked.size(); i++) {
+            if(blocked.get(i).equals(user)) {
+                blocked.remove(i);
+                i--;
+            }
+        }
     }
 
     public ArrayList<User> getFriends() {
