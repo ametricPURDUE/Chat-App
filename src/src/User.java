@@ -11,7 +11,9 @@ public class User implements userTemplate{
     private String username;
     private ArrayList <User> friends = new ArrayList<>();
     private ArrayList <User> blocked = new ArrayList<>();
+    private ArrayList <User> friendRequest = new ArrayList<>();
     private int age;
+    private String password;
 
     public User(String name, String username, int age) {
         this.name = name;
@@ -34,6 +36,12 @@ public class User implements userTemplate{
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
+        ChatDatabase.updatePassword(this.username, newPassword);
+    }
+
 
     public ArrayList<User> getBlocked() {
         return blocked;
@@ -75,6 +83,23 @@ public class User implements userTemplate{
                 i--;
             }
         }
+    }
+
+    public void friendRequest(User user) {
+        if (!friendRequest.contains(user) && !friends.contains(user)) {
+            friendRequest.add(user);
+        }
+    }
+
+    public void acceptFriendRequest(User user) {
+        if (friendRequest.contains(user)) {
+            friendRequest.remove(user); // Remove from friend requests
+            friends.add(user);           // Add to friends list
+        }
+    }
+
+    public void rejectFriendRequest(User user) {
+        friendRequest.remove(user); // Simply remove from friend requests
     }
 
     public boolean equals(User user) {

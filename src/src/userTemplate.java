@@ -19,4 +19,7 @@ public interface userTemplate {
     public void removeFriend(User user);
     public int getAge();
     public void setAge(int age);
+    public void acceptFriendRequest(User user);
+    public void rejectFriendRequest(User user);
+    public void friendRequest(User user);
 }

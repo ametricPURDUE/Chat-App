@@ -71,11 +71,14 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
+
+
     /**
      * takes each item in passwords and appends it to "passwords.txt" as its own line
      * @return - returns true if successful and false if not
      */
-    public boolean writePasswords() {
+
+    public static boolean writePasswords() {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("passwords.txt"))) {
             for(String password: passwords) {
                 bfw.write(password);
@@ -84,6 +87,15 @@ public class ChatDatabase implements ChatDatabaseInterface {
             return true;
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    // Updates the password in the passwords list for a given username.
+    public static void updatePassword(String username, String newPassword) {
+        int index = usernames.indexOf(username);
+        if (index != -1) {
+            passwords.set(index, newPassword);
+            writePasswords();
         }
     }
 
