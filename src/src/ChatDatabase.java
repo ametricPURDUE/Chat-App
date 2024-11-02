@@ -129,7 +129,8 @@ public class ChatDatabase implements ChatDatabaseInterface {
      * input string data must be formatted "name,age,username,password"
      * @return - returns true user is found and modified and false if not
      */
-    public boolean modifyUser(User user, String data) {
+    public boolean modifyUser(User user, String data) throws IncorrectInput{
+        boolean changed = false;
         try {
             String name = data.substring(0, data.indexOf(","));
             data = data.substring(data.indexOf(",") + 1);
@@ -140,6 +141,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
             String password = data.substring(0, data.indexOf(","));
             for (int i = 0; i < userList.size(); i++) {
                 if (userList.get(i).equals(user)) {
+                    changed = true;
                     user.setName(name);
                     user.setAge(age);
                     user.setUsername(username);
@@ -147,9 +149,11 @@ public class ChatDatabase implements ChatDatabaseInterface {
                     passwords.set(i, password);
                 }
             }
-        } catch (Exception e) {
-            return false;
+        } catch (IndexOutOfBoundsException e) {
+            throw new IncorrectInput("Input string data formatted incorrectly");
+        } catch (NumberFormatException e) {
+            throw new IncorrectInput("Input string data formatted incorrectly");
         }
-        return true;
+        return changed;
     }
 }
