@@ -5,4 +5,5 @@ public interface ChatDatabaseInterface {
     boolean writePasswords();
     boolean createUser(String data);
     boolean removeUser(User user);
+    boolean modifyUser(User user, String data);
 }
