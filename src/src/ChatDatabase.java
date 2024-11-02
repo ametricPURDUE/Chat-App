@@ -136,4 +136,32 @@ public class ChatDatabase implements ChatDatabaseInterface {
     
         }   
     }
+    /**
+     * modifies given user based on input string,
+     * input string data must be formatted "name,age,username,password"
+     * @return - returns true user is found and modified and false if not
+     */
+    public boolean modifyUser(User user, String data) {
+        try {
+            String name = data.substring(0, data.indexOf(","));
+            data = data.substring(data.indexOf(",") + 1);
+            int age = Integer.parseInt(data.substring(0, data.indexOf(",")));
+            data = data.substring(data.indexOf(",") + 1);
+            String username = data.substring(0, data.indexOf(","));
+            data = data.substring(data.indexOf(",") + 1);
+            String password = data.substring(0, data.indexOf(","));
+            for (int i = 0; i < userList.size(); i++) {
+                if (userList.get(i).equals(user)) {
+                    user.setName(name);
+                    user.setAge(age);
+                    user.setUsername(username);
+                    usernames.set(i, username);
+                    passwords.set(i, password);
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }
