@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 /**
  * The class that handles all functions relating to specific users
  * Purdue University -- Fall 2024 -- CS18000 -- Team Project
@@ -9,9 +10,11 @@ import java.util.ArrayList;
 public class User implements userTemplate{
     private String name;
     private String username;
+    private String userFriendsFilename;
+    private String userBlockedFilename;
     private ArrayList <User> friends = new ArrayList<>();
     private ArrayList <User> blocked = new ArrayList<>();
-    private ArrayList <User> friendRequest = new ArrayList<>();
+    private ArrayList <User> friendRequests = new ArrayList<>();
     private int age;
     private String password;
 
@@ -19,6 +22,25 @@ public class User implements userTemplate{
         this.name = name;
         this.username = username;
         this.age = age;
+        this.userFriendsFilename = name + "_friends.txt";
+        this.userBlockedFilename = name + "_blocked.txt";
+    }
+
+    public User(String data) throws IncorrectInput {
+        String[] parts = data.split(",");
+        if (parts.length != 3) {
+            throw new IncorrectInput("Wrong Data");
+        }
+        try {
+            this.name = parts[0];
+            this.username = parts[1];
+            this.age = Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            throw new IncorrectInput("Wrong Data");
+        }
+        this.userFriendsFilename = name + "_friends.txt";
+        this.userBlockedFilename = name + "_blocked.txt";
+
     }
     
     public String getName() {
@@ -42,7 +64,6 @@ public class User implements userTemplate{
         ChatDatabase.updatePassword(this.username, newPassword);
     }
 
-
     public ArrayList<User> getBlocked() {
         return blocked;
     }
@@ -51,15 +72,97 @@ public class User implements userTemplate{
         this.blocked = blocked;
     }
 
-    public void blockUser(User user) {
-        blocked.add(user);
+    /**
+     * write the user's friends list into a text file for saving
+     * @return - return true if successful and false if not
+     */
+    public boolean writeFriends() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userFriendsFilename))) {
+            for (User friend: friends) {
+                bfw.write(friend.toString());
+                bfw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
-    public void unblockUser(User user) {
-        for(int i = 0; i < blocked.size(); i++) {
-            if(blocked.get(i).equals(user)) {
-                blocked.remove(i);
-                i--;
+    /**
+     * write the user's blocked list into a text file for saving
+     * @return - return true if successful and false if not
+     */
+    public boolean writeBlocked() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userBlockedFilename))) {
+            for (User block: blocked) {
+                bfw.write(block.toString());
+                bfw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Reads the [user]_friends.txt file and adds each line to a friends array as a new user
+     * @return - returns true if successful and false if not
+     */
+    public boolean readFriends() {
+        try (BufferedReader bfr = new BufferedReader(new FileReader(userFriendsFilename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                friends.add(new User(line));
+            }
+            return true;
+        } catch (IOException | IncorrectInput e) {
+            return false;
+        }
+    }
+
+    /**
+     * Reads the [user]_blocked.txt file and adds each line to a blocked array as a new User
+     * @return - returns true if successful and false if not
+     */
+    public boolean readBlocked() {
+        try (BufferedReader bfr = new BufferedReader(new FileReader(userBlockedFilename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                blocked.add(new User(line));
+            }
+            return true;
+        } catch (IOException | IncorrectInput e) {
+            return false;
+        }
+    }
+
+    /**
+     * add the user to the blocked list and writes it to the user's specific blocked file
+     * @param user - the user to be blocked
+     */
+    public void blockUser(User user) {
+        readBlocked();
+        for (User block: blocked) {
+            if (block.equals(user)) {
+                return;
+            }
+        }
+        blocked.add(user);
+        removeFriend(user);
+        writeBlocked();
+    }
+
+    /**
+     * removes the user from the blocked list and writes it to the user's specific blocked file
+     * @param unblocked - the user to be unblocked
+     */
+    public void unblockUser(User unblocked) {
+        readBlocked();
+        for(User user: blocked) {
+            if (user.equals(unblocked)) {
+                blocked.remove(user);
+                writeBlocked();
+                break;
             }
         }
     }
@@ -72,34 +175,51 @@ public class User implements userTemplate{
         this.friends = friends;
     }
 
+    /**
+     * add the user to the friends list and writes it to the user's specific friend file
+     * @param user - the user to be added
+     */
     public void addFriend(User user) {
-        friends.add(user);
-    }
-
-    public void removeFriend(User user) {
-        for (int i = 0; i < friends.size(); i++) {
-            if (friends.get(i).equals(user)) {
-                friends.remove(i);
-                i--;
+        readFriends();
+        for (User friend: friends) {
+            if (friend.equals(user)) {
+                return;
             }
         }
+        friends.add(user);
+        writeFriends();
+    }
+
+    /**
+     * removes the user from the friends list and writes it to the user's specific friend file
+     * @param unfriend - the user to be unfriended
+     */
+    public void removeFriend(User unfriend) {
+        readFriends();
+        for (int i = 0; i < friends.size(); i++) {
+            if (unfriend.equals(friends.get(i))) {
+                friends.remove(i);
+                break;
+            }
+        }
+        writeFriends();
     }
 
     public void friendRequest(User user) {
-        if (!friendRequest.contains(user) && !friends.contains(user)) {
-            friendRequest.add(user);
+        if (!friendRequests.contains(user) && !friends.contains(user)) {
+            friendRequests.add(user);
         }
     }
 
     public void acceptFriendRequest(User user) {
-        if (friendRequest.contains(user)) {
-            friendRequest.remove(user); // Remove from friend requests
+        if (friendRequests.contains(user)) {
+            friendRequests.remove(user); // Remove from friend requests
             friends.add(user);           // Add to friends list
         }
     }
 
     public void rejectFriendRequest(User user) {
-        friendRequest.remove(user); // Simply remove from friend requests
+        friendRequests.remove(user); // Simply remove from friend requests
     }
 
     public boolean equals(User user) {
@@ -121,5 +241,10 @@ public class User implements userTemplate{
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%d", name, username, age);
     }
 }

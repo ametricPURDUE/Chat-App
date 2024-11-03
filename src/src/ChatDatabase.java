@@ -14,7 +14,6 @@ public class ChatDatabase implements ChatDatabaseInterface {
     private static ArrayList<String> passwords;
     public static final Object MAIN_LOCK = new Object();
 
-
     public ChatDatabase() {
         synchronized(MAIN_LOCK) {
             userList = new ArrayList<User>();
@@ -114,6 +113,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
             throw new IncorrectInput("Age cannot be below 0");
         }
         userList.add(new User(userData[0], userData[1], newAge));
+        usernames.add(userData[1]);
         return true;
     }
 
@@ -161,9 +161,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
                     passwords.set(i, password);
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
-            throw new IncorrectInput("Input string data formatted incorrectly");
-        } catch (NumberFormatException e) {
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
             throw new IncorrectInput("Input string data formatted incorrectly");
         }
         return changed;
