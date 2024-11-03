@@ -116,6 +116,44 @@ public class RunLocalTest {
             }
         }
 
+        @Test(timeout = 1000)
+        public void testChatDatabase() throws IncorrectInput{
+            ArrayList<User> expectedUsers = new ArrayList<User>();
+            ArrayList<String> expectedUsernames = new ArrayList<String>();
+            ArrayList<String> expectedPasswords = new ArrayList<String>();
+
+            expectedUsers.add(new User("AJ Metrick,ametric,18"));
+            expectedUsers.add(new User("Parshawn Haynes,phaynes18,19"));
+            expectedUsers.add(new User("Nolan Shultz,nshultz,17"));
+
+            expectedUsernames.add("ametric");
+            expectedUsernames.add("phaynes18");
+            expectedUsernames.add("nshultz");
+
+            expectedPasswords.add("Test1");
+            expectedPasswords.add("Test2");
+            expectedPasswords.add("Test3");
+
+            ChatDatabase testDatabase = new ChatDatabase(expectedUsers, expectedUsernames, expectedPasswords);
+
+            boolean actWriteUsernames = testDatabase.writeUsernames();
+            boolean actWritePasswords = ChatDatabase.writePasswords();
+            boolean actReadUsernames = testDatabase.readUsernames();
+            boolean actReadPasswords = testDatabase.readPasswords();
+            boolean actUpdatePassword = ChatDatabase.updatePassword("ametric", "test43");
+            boolean actCreateUser = testDatabase.createUser("Edward Ju,eju18,18");
+            boolean actRemoveUser = testDatabase.removeUser(new User("AJ Metrick,ametric,18"));
+            boolean actModifyUser = testDatabase.modifyUser(new User("Nolan Shultz,nshultz,17"), "Pranav Sangani,18,psangani,test5");
+
+            assertTrue("Ensure that writeUsernames() returns the correct value", actWriteUsernames);
+            assertTrue("Ensure that writePasswords() returns the correct value", actWritePasswords);
+            assertTrue("Ensure that readUsernames() returns the correct value", actReadUsernames);
+            assertTrue("Ensure that readPasswords() returns the correct value", actReadPasswords);
+            assertTrue("Ensure that updatePassword() returns the correct value", actUpdatePassword);
+            assertTrue("Ensure that createUser() returns the correct value", actCreateUser);
+            assertTrue("Ensure that removeUser() returns the correct value", actRemoveUser);
+            assertTrue("Ensure that modifyUser() returns the correct value", actModifyUser);
+        }
     }
 }
 

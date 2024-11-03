@@ -22,6 +22,17 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
+    public ChatDatabase(ArrayList<User> userList, ArrayList<String> usernames, ArrayList<String> passwords) {
+        synchronized (MAIN_LOCK) {
+            ChatDatabase.userList = userList;
+            ChatDatabase.usernames = usernames;
+            ChatDatabase.passwords = passwords;
+        }
+    }
+
+    public ArrayList<User> getUsers() {
+        return userList;
+    }
     /**
      * reads the file "usernames.txt" and adds each username as a separate string in the usernames list
      * @return - returns true if successful and false if not
@@ -90,12 +101,14 @@ public class ChatDatabase implements ChatDatabaseInterface {
     }
 
     // Updates the password in the passwords list for a given username.
-    public static void updatePassword(String username, String newPassword) {
+    public static boolean updatePassword(String username, String newPassword) {
         int index = usernames.indexOf(username);
         if (index != -1) {
             passwords.set(index, newPassword);
             writePasswords();
+            return true;
         }
+        return false;
     }
 
     public boolean createUser(String data) throws IncorrectInput {
@@ -142,28 +155,28 @@ public class ChatDatabase implements ChatDatabaseInterface {
      * @return - returns true user is found and modified and false if not
      */
     public boolean modifyUser(User user, String data) throws IncorrectInput{
-        boolean changed = false;
-        try {
-            String name = data.substring(0, data.indexOf(","));
-            data = data.substring(data.indexOf(",") + 1);
-            int age = Integer.parseInt(data.substring(0, data.indexOf(",")));
-            data = data.substring(data.indexOf(",") + 1);
-            String username = data.substring(0, data.indexOf(","));
-            data = data.substring(data.indexOf(",") + 1);
-            String password = data.substring(0, data.indexOf(","));
-            for (int i = 0; i < userList.size(); i++) {
-                if (userList.get(i).equals(user)) {
-                    changed = true;
-                    user.setName(name);
-                    user.setAge(age);
-                    user.setUsername(username);
-                    usernames.set(i, username);
-                    passwords.set(i, password);
-                }
-            }
-        } catch (IndexOutOfBoundsException | NumberFormatException e) {
-            throw new IncorrectInput("Input string data formatted incorrectly");
+        String[] parts = data.split(",");
+        if (parts.length != 4) {
+            return false;
         }
-        return changed;
+        String name = parts[0];
+        int age = -1;
+        try {
+            age = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        String username = parts[2];
+        String password = parts[3];
+        User newUser = new User(name, username, age);
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).equals(user)) {
+                userList.set(i, newUser);
+                usernames.set(i, username);
+                passwords.set(i, password);
+                return true;
+            }
+        }
+        return false;
     }
 }
