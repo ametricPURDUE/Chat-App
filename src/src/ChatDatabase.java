@@ -99,19 +99,19 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
-    public boolean createUser(String data) {
+    public boolean createUser(String data) throws IncorrectInput {
         String[] userData = data.split(",");
         if (userData.length < 3) {
-            return false;
+            throw new IncorrectInput("Input string data formatted incorrectly");
         }
         int newAge = -1;
         try {
             newAge = Integer.parseInt(userData[2]);
         } catch (NumberFormatException e) {
-            return false;
+            throw new IncorrectInput("Please input a number for age");
         }
         if (newAge == -1) {
-            return false;
+            throw new IncorrectInput("Age cannot be below 0");
         }
         userList.add(new User(userData[0], userData[1], newAge));
         return true;
