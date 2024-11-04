@@ -111,6 +111,7 @@ public class User implements userTemplate{
     public boolean readFriends() {
         try (BufferedReader bfr = new BufferedReader(new FileReader(userFriendsFilename))) {
             String line;
+            setFriends(new ArrayList<User>());
             while ((line = bfr.readLine()) != null) {
                 friends.add(new User(line));
             }
@@ -127,6 +128,7 @@ public class User implements userTemplate{
     public boolean readBlocked() {
         try (BufferedReader bfr = new BufferedReader(new FileReader(userBlockedFilename))) {
             String line;
+            setBlocked(new ArrayList<User>());
             while ((line = bfr.readLine()) != null) {
                 blocked.add(new User(line));
             }

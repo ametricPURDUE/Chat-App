@@ -154,6 +154,60 @@ public class RunLocalTest {
             assertTrue("Ensure that removeUser() returns the correct value", actRemoveUser);
             assertTrue("Ensure that modifyUser() returns the correct value", actModifyUser);
         }
+        @Test(timeout = 1000)
+        public void testUser() {
+            User nolan = new User("Nolan Shultz", "nolan_shultz", 18);
+            User aj = new User("AJ Metrick", "ajMetrick", 18);
+            User parshawn = new User("Parshawn Haynes", "phaynes18", 19);
+            User edward = new User("Edward Ju" ,"eju18" ,18);
+            ArrayList<User> expectedBlocked = new ArrayList<>();
+            ArrayList<User> expectedFriends = new ArrayList<>();
+            Assert.assertEquals("Ensure that getName() returns the correct value", nolan.getName(), "Nolan Shultz");
+            Assert.assertEquals("Ensure that getAge() returns the correct value", nolan.getAge(), 18);
+            Assert.assertEquals("Ensure that getUsername() returns the correct value", nolan.getUsername(), "nolan_shultz");
+            try {
+                User ajTwo = new User("AJ Metrick,ajMetrick,18");
+                Assert.assertEquals("Ensure that User(String data) is correctly assigning the name variable", ajTwo.getName(), "AJ Metrick");
+                Assert.assertEquals("Ensure that User(String data) is correctly assigning the age variable", ajTwo.getAge(), 18);
+                Assert.assertEquals("Ensure that User(String data) is correctly assigning the username variable", ajTwo.getUsername(), "ajMetrick");
+            } catch (IncorrectInput e) {
+                Assert.fail("Ensure that User is not throwing IncorrectInput when it shouldn't");
+            }
+            nolan.setName("Edward Ju");
+            nolan.setAge(19);
+            nolan.setUsername("eju18");
+            Assert.assertEquals("Ensure that setName() returns the correct value" , nolan.getName(), "Edward Ju");
+            Assert.assertEquals("Ensure that setAge() returns the correct value", nolan.getAge(), 19);
+            Assert.assertEquals("Ensure that setUsername() returns the correct value", nolan.getUsername(), "eju18");
+            expectedBlocked.add(parshawn);
+            expectedBlocked.add(aj);
+            nolan.setBlocked(new ArrayList<User>());
+            nolan.blockUser(parshawn);
+            nolan.blockUser(aj);
+            boolean blockedCorrect = true;
+            try {
+                for (int i = 0; i < nolan.getBlocked().size(); i++) {
+                    blockedCorrect = expectedBlocked.get(i).toString().equals(nolan.getBlocked().get(i).toString()) && blockedCorrect;
+                }
+            } catch (IndexOutOfBoundsException e) {
+                Assert.fail("Ensure that getBlocked() returns the correct value");
+            }
+            Assert.assertEquals("Ensure that getBlocked returns the correct values", blockedCorrect, true);
+            expectedFriends.add(parshawn);
+            expectedFriends.add(aj);
+            nolan.setFriends(new ArrayList<User>());
+            nolan.addFriend(parshawn);
+            nolan.addFriend(aj);
+            boolean friendsCorrect = true;
+            try {
+                for (int i = 0; i < nolan.getFriends().size(); i++) {
+                    friendsCorrect = expectedFriends.get(i).toString().equals(nolan.getFriends().get(i).toString()) && friendsCorrect;
+                }
+            } catch (IndexOutOfBoundsException e) {
+                Assert.fail("Ensure that getFriends() returns the correct value");
+            }
+            Assert.assertEquals("Ensure that getFriends() returns the correct values", blockedCorrect, true);
+        }
     }
 }
 
