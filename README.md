@@ -3,6 +3,21 @@ TODO:
 ChatDatabase:  
 Also a "RunLocalTest.java" file  AJ
 
+MainChatServer:
+make an interface
+Should be done besides that
+
+ChatSubServer:
+make an interface
+Write all the code to interact with client and server
+
+ChatClient:
+make an interface
+write the code to interact with subserver, code to interact with main server already done
+Make sure to call MainChatServer.updateEmptyServer at end
+    Currently fixing issue with above method - Nolan
+
+
 
 Class Descriptions :
  - ChatDatabaseInterface.java:
