@@ -9,16 +9,31 @@ public class ChatClient {
         try {
             Socket mainSocket = new Socket("localhost", 4242); // Connects to main server
             BufferedReader reader = new BufferedReader(new InputStreamReader(mainSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(mainSocket.getOutputStream());
             String subserverPort = reader.readLine(); // Recieves port number and index of an open subserver from the main server
             if (subserverPort.equals("No Open Servers")) {
                 hasServer = false;
+                out.write("NoServerFound");
+                out.println();
+                out.flush();
+                mainSocket.close();
+                reader.close();
+                out.close();
                 System.out.println("No Open Servers found");
             } else {
                 serverPort = Integer.parseInt(subserverPort.substring(0, subserverPort.indexOf(";")));
                 serverIndex = Integer.parseInt(subserverPort.substring(subserverPort.indexOf(";") + 1));
+                Socket subSocket = new Socket("localhost", serverPort);
+                out.write("ReceivedServer");
+                out.println();
+                out.flush();
+                mainSocket.close();
+                reader.close();
+                out.close();
                 System.out.println("Server Port : " +  serverPort);
                 System.out.println("Server Index : " + serverIndex);
             }
+            mainSocket.close(); //closes connection to main server
         } catch (IOException e) {
             e.printStackTrace();
         }
