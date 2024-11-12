@@ -12,11 +12,16 @@ make an interface
 Write all the code to interact with client and server
 
 ChatClient:
-make an interface
-write the code to interact with subserver, code to interact with main server already done
-Make sure to call MainChatServer.updateEmptyServer at end
-    Currently fixing issue with above method - Nolan
+Search method/code
+- Doesn't need to be method but it will look nicer
+Messaging method/code
+View profile method
+^
+above methods need to work with server as well
 
+RunLocalTest
+Read me documentation
+1000 word report
 
 
 Class Descriptions :
