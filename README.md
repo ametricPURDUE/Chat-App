@@ -13,9 +13,9 @@ Write all the code to interact with client and server
 
 ChatClient:
 Search method/code
-- Doesn't need to be method but it will look nicer
-Messaging method/code
-View profile method
+- Doesn't need to be method but it will look nicer\n
+Messaging method/code\n
+View profile method\n
 ^
 above methods need to work with server as well
 
