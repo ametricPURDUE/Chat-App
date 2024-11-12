@@ -19,8 +19,8 @@ ChatClient:
 - ^
 - above methods need to work with server as well
 
-RunLocalTest
-Read me documentation
+RunLocalTest, 
+Read me documentation, 
 1000 word report
 
 
