@@ -50,4 +50,7 @@ public class ChatClient {
             return "Socket is not connected";
         }
     }
+    public String writeServer(String msg, Socket socket) {
+        return "placeholder";
+    }
 }
