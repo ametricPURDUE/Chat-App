@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class ChatClient {
     public static void main(String[] args) {
@@ -33,14 +34,30 @@ public class ChatClient {
                 System.out.println("Server Port : " +  serverPort);
                 System.out.println("Server Index : " + serverIndex);
                 System.out.println("Welcome!");
-
+                System.out.println("Please enter username");
+                Scanner scan = new Scanner(System.in);
+                boolean continueLogin = true;
+                String username;
+                while (continueLogin) {
+                    username = scan.nextLine();
+                    writeServer(username, subSocket);
+                    System.out.println("Please enter password");
+                    writeServer(scan.nextLine(), subSocket);
+                    String loginCheck = readServer(subSocket);
+                    if (loginCheck.equals("goodInfo")) {
+                        System.out.println("Login Successful, Welcome " + username);
+                        continueLogin = false;
+                    } else {
+                        System.out.println("Login Failed, please try again");
+                    }
+                }
             }
             mainSocket.close(); //closes connection to main server
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public String readServer(Socket socket) {
+    public static String readServer(Socket socket) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String s = in.readLine();
@@ -50,7 +67,7 @@ public class ChatClient {
             return "Socket is not connected";
         }
     }
-    public String writeServer(String msg, Socket socket) {
-        return "placeholder";
+    public static boolean writeServer(String msg, Socket socket) {
+        return true;
     }
 }
