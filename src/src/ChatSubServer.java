@@ -14,10 +14,20 @@ class ChatSubServer implements Runnable {
             Socket socket = serverSocket.accept();
             running = true;
             while(running) {
-                running = false;
-                running = true;
+                boolean loginCorrect = false;
+                while (!loginCorrect) {
+                    String username = readClient(socket);
+                    String password = readClient(socket);
+                    //code to check if username and password are correct store in variable goodInfo
+                    boolean goodInfo = true;
+                    if (goodInfo) {
+                        writeClient("goodInfo", socket);
+                        loginCorrect = true;
+                    } else {
+                        writeClient("badInfo", socket);
+                    }
+                }
             }
-            running = false;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -25,7 +35,7 @@ class ChatSubServer implements Runnable {
     public boolean portOpen() {
         return !running;
     }
-    public String readClient(Socket socket) {
+    public static String readClient(Socket socket) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String s = in.readLine();
@@ -35,7 +45,7 @@ class ChatSubServer implements Runnable {
             return "Socket is not connected";
         }
     }
-    public String writeClient(String msg, Socket socket) {
-        return "placeholder";
+    public static boolean writeClient(String msg, Socket socket) {
+        return true;
     }
 }
