@@ -35,4 +35,7 @@ class ChatSubServer implements Runnable {
             return "Socket is not connected";
         }
     }
+    public String writeClient(String msg, Socket socket) {
+        return "placeholder";
+    }
 }
