@@ -32,10 +32,22 @@ public class ChatClient {
                 out.close();
                 System.out.println("Server Port : " +  serverPort);
                 System.out.println("Server Index : " + serverIndex);
+                System.out.println("Welcome!");
+
             }
             mainSocket.close(); //closes connection to main server
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public String readServer(Socket socket) {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String s = in.readLine();
+            in.close();
+            return s;
+        } catch (IOException e) {
+            return "Socket is not connected";
         }
     }
 }
