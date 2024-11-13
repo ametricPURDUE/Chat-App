@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 
 class ChatSubServer implements Runnable {
@@ -24,5 +24,15 @@ class ChatSubServer implements Runnable {
     }
     public boolean portOpen() {
         return !running;
+    }
+    public String readClient(Socket socket) {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String s = in.readLine();
+            in.close();
+            return s;
+        } catch (IOException e) {
+            return "Socket is not connected";
+        }
     }
 }
