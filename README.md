@@ -1,8 +1,5 @@
 # Chat-App
 TODO:
-ChatDatabase:  
-Also a "RunLocalTest.java" file  AJ
-
 MainChatServer:
 make an interface
 Should be done besides that
@@ -16,8 +13,16 @@ ChatClient:
     - Doesn't need to be method but it will look nicer
 - Messaging method/code\n
 - View profile method\n
-- ^
 - above methods need to work with server as well
+- search - Edward
+
+
+Server Stuff
+- Send Methods for both - AJ
+- Receive Method - Nolan
+- User messages txt file creation in the database - Pranav
+- thread safe - Edward
+- Test Cases - Parshawn
 
 RunLocalTest, 
 Read me documentation, 
