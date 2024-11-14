@@ -181,7 +181,6 @@ public class ChatDatabase implements ChatDatabaseInterface {
     }
 
     public boolean writeMessageToFile(String senderUsername, String receiverUsername, String message) {
-        // Determine file name based on alphabetical order
         String filename;
         if (senderUsername.compareTo(receiverUsername) < 0) {
             filename = "chat" + senderUsername + receiverUsername + ".txt";
@@ -189,8 +188,8 @@ public class ChatDatabase implements ChatDatabaseInterface {
             filename = "chat" + receiverUsername + senderUsername + ".txt";
         }
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {  // PrintWriter with FileWriter in append mode
-            writer.println(senderUsername + ": " + message);  // PrintWriter's println automatically appends a newline
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
+            writer.println(senderUsername + ": " + message);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
