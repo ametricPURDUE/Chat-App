@@ -18,7 +18,6 @@ ChatClient:
 
 
 Server Stuff
-- Send Methods for both - AJ
 - Receive Method - Nolan
 - User messages txt file creation in the database - Pranav
 - thread safe - Edward
