@@ -57,6 +57,12 @@ public class ChatClient {
             e.printStackTrace();
         }
     }
+
+    /**
+     * A method to read the message the server sends
+     * @param socket the server to receive from
+     * @return returns the received message from the server
+     */
     public static String readServer(Socket socket) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -67,7 +73,27 @@ public class ChatClient {
             return "Socket is not connected";
         }
     }
+
+    /**
+     * A method that sends the inputted message to the server
+     * @param msg the message to be sent
+     * @param socket the server socket that the message will be sent to
+     * @return return true if sent successfully and false otherwise
+     */
     public static boolean writeServer(String msg, Socket socket) {
-        return true;
+        // makes sure the socket is valid
+        try (Socket sckt = socket) {
+            // creates a print writer object to write to the server
+            PrintWriter writer = new PrintWriter(sckt.getOutputStream());
+            // writes the inputted msg to the server, then flushes the writer
+            writer.write(msg);
+            writer.println();
+            writer.flush();
+            // returns true if all things go smoothly
+            return true;
+        } catch (IOException e) {
+            // if the socket is invalid return false
+            return false;
+        }
     }
 }

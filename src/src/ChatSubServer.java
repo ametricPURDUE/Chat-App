@@ -45,7 +45,27 @@ class ChatSubServer implements Runnable {
             return "Socket is not connected";
         }
     }
+
+    /**
+     * a method to send data to the client
+     * @param msg the message to be sent
+     * @param socket the client to send to
+     * @return returns true if sent successfully and false otherwise
+     */
     public static boolean writeClient(String msg, Socket socket) {
-        return true;
+        // makes sure the socket is valid
+        try (Socket sckt = socket) {
+            // creates the PrintWriter object to write to client
+            PrintWriter writer = new PrintWriter(sckt.getOutputStream());
+            // writes and sends the msg to the client, then flushes the writer
+            writer.write(msg);
+            writer.println();
+            writer.flush();
+            // returns true if everything works correctly
+            return true;
+        } catch (IOException e) {
+            // returns false if the socket is invalid
+            return false;
+        }
     }
 }
