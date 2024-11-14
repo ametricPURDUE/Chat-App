@@ -179,4 +179,48 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
         return false;
     }
-}
+
+    public boolean writeMessageToFile(String senderUsername, String receiverUsername, String message) {
+        // Determine file name based on alphabetical order
+        String filename;
+        if (senderUsername.compareTo(receiverUsername) < 0) {
+            filename = "chat" + senderUsername + receiverUsername + ".txt";
+        } else {
+            filename = "chat" + receiverUsername + senderUsername + ".txt";
+        }
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {  // PrintWriter with FileWriter in append mode
+            writer.println(senderUsername + ": " + message);  // PrintWriter's println automatically appends a newline
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+        public ArrayList<String> readMessagesFromFile(String senderUsername, String receiverUsername) {
+            String filename;
+            if (senderUsername.compareTo(receiverUsername) < 0) {
+                filename = "chat" + senderUsername + receiverUsername + ".txt";
+            } else {
+                filename = "chat" + receiverUsername + senderUsername + ".txt";
+            }
+
+            ArrayList<String> messages = new ArrayList<>();
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    messages.add(line);
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("No previous conversation found between " + senderUsername + " and " + receiverUsername);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return messages;
+        }
+    }
+
+
