@@ -4,6 +4,8 @@ MainChatServer:
 make an interface
 Should be done besides that
 
+Make a login function - Nolan
+
 ChatSubServer:
 make an interface
 Write all the code to interact with client and server
