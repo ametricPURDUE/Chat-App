@@ -238,6 +238,22 @@ public class ChatDatabase implements ChatDatabaseInterface {
                 return messages;
             }
         }
+
+        public boolean searchFriends(String target) {
+            synchronized (MAIN_LOCK) {
+                try {
+                    for (String username : usernames) {
+                        if (username.toLowerCase().contains(target.toLowerCase())) {
+                            return true; 
+                        }
+                    }
+                    return false; 
+                } catch (Exception e) {
+                    return false; 
+                }
+            }
+        }
+
     }
 
 
