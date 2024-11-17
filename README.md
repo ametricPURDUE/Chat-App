@@ -8,14 +8,14 @@ Make a login function - Nolan
 
 ChatSubServer:
 make an interface
-Write all the code to interact with client and server
+Write all the code to interact with client and server - nolan
 
 ChatClient:
 - Search method/code
     - Doesn't need to be method but it will look nicer
 - Messaging method/code\n
-- View profile method\n
-- above methods need to work with server as well
+- View profile method\n - nolan
+- above methods need to work with server as well - nolan
 - search - Edward
 
 
@@ -49,11 +49,28 @@ Class Descriptions :
  - IncorrectInput.java
      - Extends Exception
      - is thrown when the input given to create or modify a user is not formatted correctly
+ - ChatClient.java
+     - Main method allows user to login, view friends/blocked, search users, and view conversations
+ - ClientInterface.java
+     - Interface for ChatClient.java
+     - Has static read and write methods to interact with servers
+ - MainChatServer.java
+     - Main server, client connects and is sent the port of an open subserver
+     - opens 10 subserver threads that wait for user connection
+ - MainServerInterface.java
+     - Interface for MainChatServer.java
+ - ChatSubServer.java
+     - Server that interacts with database and client
+     - processes input from the client and acts accordingly, either modifying the database or returning the correct data
+ - SubServerInterface.java
+     - Interface for subServer
+     - has static read and write methods to interact with client
   
 Test Descriptions:
     - ChatClient.java:
         - main(Strin[] args)
             - Was tested a multitude of ways including sending all valid servers, some valid; some not, and all invalid servers to make sure it worked properly
+    -ClientInterface.java:
         - readServer(Socket socket)
             - Was tested with both a valid and invalid server
             - Was sent many data types and all were returned correctly as strings
@@ -102,6 +119,7 @@ Test Descriptions:
     - ChatSubServer.java:
         - run()
             - tested with multiple portNumbers to make sure that multiple servers are established
+    - SubServerInterface.java
         - readClient(Socket socket)
             - tested invalid and valid socket ensure the correct connection
         - writeClient(String msg, Socket socket)
