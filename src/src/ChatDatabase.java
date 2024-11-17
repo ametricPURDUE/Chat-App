@@ -27,13 +27,15 @@ public class ChatDatabase implements ChatDatabaseInterface {
             ChatDatabase.userList = userList;
             ChatDatabase.usernames = usernames;
             ChatDatabase.passwords = passwords;
+            writePasswords();
+            writeUsers();
+            writeUsernames();
         }
     }
 
     public User getUsers(String username) {
         readUsers();
         synchronized(MAIN_LOCK) {
-            readUsers();
             for(User user : userList) {
                 if(user.getUsername().equals(username)) {
                     return user;
@@ -48,6 +50,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
      */
     public boolean readUsernames() {
         synchronized(MAIN_LOCK) {
+            usernames.clear();
             try(BufferedReader bfr = new BufferedReader(new FileReader("usernames.txt"))) {
                 String line;
                 while ((line = bfr.readLine()) != null) {
@@ -62,6 +65,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
 
     public boolean readUsers() {
         synchronized(MAIN_LOCK) {
+            userList.clear();
             try(BufferedReader bfr = new BufferedReader(new FileReader("users.txt"))) {
                 String line;
                 while ((line = bfr.readLine()) != null) {
@@ -81,6 +85,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
      */
     public boolean readPasswords() {
         synchronized(MAIN_LOCK) {
+            passwords.clear();
             try (BufferedReader bfr = new BufferedReader(new FileReader("passwords.txt"))) {
                 String line;
                 while ((line = bfr.readLine()) != null) {
@@ -145,10 +150,12 @@ public class ChatDatabase implements ChatDatabaseInterface {
     }
 
     // Updates the password in the passwords list for a given username.
-    public static boolean updatePassword(String username, String newPassword) {
+    public boolean updatePassword(String username, String newPassword) {
         synchronized(MAIN_LOCK) {
+            readPasswords();
             int index = usernames.indexOf(username);
             if (index != -1) {
+                getUsers(username).setPassword(newPassword);
                 passwords.set(index, newPassword);
                 writePasswords();
                 return true;
@@ -169,7 +176,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
             } catch (NumberFormatException e) {
                 throw new IncorrectInput("Please input a number for age");
             }
-            if (newAge == -1) {
+            if (newAge < 0) {
                 throw new IncorrectInput("Age cannot be below 0");
             }
             userList.add(new User(userData[0], userData[1], newAge));
@@ -197,6 +204,9 @@ public class ChatDatabase implements ChatDatabaseInterface {
             userList.remove(index);
             usernames.remove(index);
             passwords.remove(index);
+            writeUsers();
+            writeUsernames();
+            writePasswords();
             return true;
     
         }   
@@ -206,7 +216,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
      * input string data must be formatted "name,age,username,password"
      * @return - returns true user is found and modified and false if not
      */
-    public boolean modifyUser(User user, String data) throws IncorrectInput{
+    public boolean modifyUser(User user, String data){
         synchronized(MAIN_LOCK) {
             String[] parts = data.split(",");
             if (parts.length != 3) {
@@ -278,21 +288,6 @@ public class ChatDatabase implements ChatDatabaseInterface {
                     e.printStackTrace();
                 }
                 return messages;
-            }
-        }
-
-        public boolean searchFriends(String target) {
-            synchronized (MAIN_LOCK) {
-                try {
-                    for (String username : usernames) {
-                        if (username.toLowerCase().contains(target.toLowerCase())) {
-                            return true; 
-                        }
-                    }
-                    return false; 
-                } catch (Exception e) {
-                    return false; 
-                }
             }
         }
         public boolean login(String username, String password) {

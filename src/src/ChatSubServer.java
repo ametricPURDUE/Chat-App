@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-class ChatSubServer implements Runnable, SubServerInterface {
+public class ChatSubServer implements Runnable, SubServerInterface {
     private int portNumber;
     ServerSocket serverSocket;
     private boolean running = false;

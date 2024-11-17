@@ -19,6 +19,7 @@ public class User implements userTemplate{
     private ArrayList <User> friendRequests = new ArrayList<>();
     private int age;
     private String password;
+    private static Object lock = new Object();
 
     public User(String name, String username, int age) {
         this.name = name;
@@ -65,7 +66,6 @@ public class User implements userTemplate{
 
     public void setPassword(String newPassword) {
         this.password = newPassword;
-        ChatDatabase.updatePassword(this.username, newPassword);
     }
 
     public ArrayList<User> getBlocked() {
@@ -82,56 +82,64 @@ public class User implements userTemplate{
      * @return - return true if successful and false if not
      */
     public boolean writeFriends() {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userFriendsFilename))) {
-            for (User friend: friends) {
-                bfw.write(friend.toString());
-                bfw.newLine();
+        synchronized(lock) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userFriendsFilename))) {
+                for (User friend : friends) {
+                    bfw.write(friend.toString());
+                    bfw.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
             }
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 
     public boolean writeMessages() {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userMessagesFilename))) {
-            for (String message: messages) {
-                bfw.write(message);
-                bfw.newLine();
+        synchronized (lock) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userMessagesFilename))) {
+                for (String message : messages) {
+                    bfw.write(message);
+                    bfw.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
             }
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 
     public boolean newMessage(User user) {
         String filename;
         readMessages();
-        if (this.getUsername().compareTo(user.getUsername()) < 0) {
-            filename = "chat" + this.getUsername() + user.getUsername() + ".txt";
-        } else {
-            filename = "chat" + user.getUsername() + this.getUsername() + ".txt";
-        }
-        if (!messages.contains(filename)) {
-            messages.add(filename);
-            writeMessages();
-            return true;
-        } else {
-            return false;
+        synchronized (lock) {
+            if (this.getUsername().compareTo(user.getUsername()) < 0) {
+                filename = "chat" + this.getUsername() + user.getUsername() + ".txt";
+            } else {
+                filename = "chat" + user.getUsername() + this.getUsername() + ".txt";
+            }
+            if (!messages.contains(filename)) {
+                messages.add(filename);
+                writeMessages();
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     public boolean readMessages() {
-        try (BufferedReader bfr = new BufferedReader(new FileReader(userMessagesFilename))) {
-            String line;
-            messages = new ArrayList<String>();
-            while ((line = bfr.readLine()) != null) {
-                messages.add(line);
+        synchronized (lock) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(userMessagesFilename))) {
+                String line;
+                messages = new ArrayList<String>();
+                while ((line = bfr.readLine()) != null) {
+                    messages.add(line);
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
             }
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
     /**
@@ -139,14 +147,16 @@ public class User implements userTemplate{
      * @return - return true if successful and false if not
      */
     public boolean writeBlocked() {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userBlockedFilename))) {
-            for (User block: blocked) {
-                bfw.write(block.toString());
-                bfw.newLine();
+        synchronized (lock) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userBlockedFilename))) {
+                for (User block : blocked) {
+                    bfw.write(block.toString());
+                    bfw.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
             }
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 
@@ -155,15 +165,17 @@ public class User implements userTemplate{
      * @return - returns true if successful and false if not
      */
     public boolean readFriends() {
-        try (BufferedReader bfr = new BufferedReader(new FileReader(userFriendsFilename))) {
-            String line;
-            setFriends(new ArrayList<User>());
-            while ((line = bfr.readLine()) != null) {
-                friends.add(new User(line));
+        synchronized (lock) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(userFriendsFilename))) {
+                String line;
+                setFriends(new ArrayList<User>());
+                while ((line = bfr.readLine()) != null) {
+                    friends.add(new User(line));
+                }
+                return true;
+            } catch (IOException | IncorrectInput e) {
+                return false;
             }
-            return true;
-        } catch (IOException | IncorrectInput e) {
-            return false;
         }
     }
 
@@ -172,15 +184,17 @@ public class User implements userTemplate{
      * @return - returns true if successful and false if not
      */
     public boolean readBlocked() {
-        try (BufferedReader bfr = new BufferedReader(new FileReader(userBlockedFilename))) {
-            String line;
-            setBlocked(new ArrayList<User>());
-            while ((line = bfr.readLine()) != null) {
-                blocked.add(new User(line));
+        synchronized (lock) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(userBlockedFilename))) {
+                String line;
+                setBlocked(new ArrayList<User>());
+                while ((line = bfr.readLine()) != null) {
+                    blocked.add(new User(line));
+                }
+                return true;
+            } catch (IOException | IncorrectInput e) {
+                return false;
             }
-            return true;
-        } catch (IOException | IncorrectInput e) {
-            return false;
         }
     }
 
@@ -190,14 +204,16 @@ public class User implements userTemplate{
      */
     public void blockUser(User user) {
         readBlocked();
-        for (User block: blocked) {
-            if (block.equals(user)) {
-                return;
+        synchronized (lock) {
+            for (User block : blocked) {
+                if (block.equals(user)) {
+                    return;
+                }
             }
+            blocked.add(user);
+            removeFriend(user);
+            writeBlocked();
         }
-        blocked.add(user);
-        removeFriend(user);
-        writeBlocked();
     }
 
     /**
@@ -206,11 +222,13 @@ public class User implements userTemplate{
      */
     public void unblockUser(User unblocked) {
         readBlocked();
-        for(User user: blocked) {
-            if (user.equals(unblocked)) {
-                blocked.remove(user);
-                writeBlocked();
-                break;
+        synchronized (lock) {
+            for (User user : blocked) {
+                if (user.equals(unblocked)) {
+                    blocked.remove(user);
+                    writeBlocked();
+                    break;
+                }
             }
         }
     }
@@ -230,12 +248,14 @@ public class User implements userTemplate{
      */
     public void addFriend(User user) {
         readFriends();
-        for (User friend: friends) {
-            if (friend.equals(user)) {
-                return;
+        synchronized (lock) {
+            for (User friend : friends) {
+                if (friend.equals(user)) {
+                    return;
+                }
             }
+            friends.add(user);
         }
-        friends.add(user);
         writeFriends();
     }
 
@@ -245,10 +265,12 @@ public class User implements userTemplate{
      */
     public void removeFriend(User unfriend) {
         readFriends();
-        for (int i = 0; i < friends.size(); i++) {
-            if (unfriend.equals(friends.get(i))) {
-                friends.remove(i);
-                break;
+        synchronized (lock) {
+            for (int i = 0; i < friends.size(); i++) {
+                if (unfriend.equals(friends.get(i))) {
+                    friends.remove(i);
+                    break;
+                }
             }
         }
         writeFriends();
@@ -272,16 +294,18 @@ public class User implements userTemplate{
     }
 
     public boolean equals(User user) {
-        if (!name.equals(user.name)) {
-            return false;
+        synchronized (lock) {
+            if (!name.equals(user.name)) {
+                return false;
+            }
+            if (!username.equals(user.username)) {
+                return false;
+            }
+            if (age != user.age) {
+                return false;
+            }
+            return true;
         }
-        if (!username.equals(user.username)) {
-            return false;
-        }
-        if (age != user.age) {
-            return false;
-        }
-        return true;
     }
 
     public int getAge() {
