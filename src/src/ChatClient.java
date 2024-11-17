@@ -18,8 +18,6 @@ public class ChatClient {
                 out.println();
                 out.flush();
                 mainSocket.close();
-                reader.close();
-                out.close();
                 System.out.println("No Open Servers found");
             } else {
                 serverPort = Integer.parseInt(subserverPort.substring(0, subserverPort.indexOf(";")));
@@ -31,28 +29,97 @@ public class ChatClient {
                 mainSocket.close();
                 reader.close();
                 out.close();
-                System.out.println("Server Port : " +  serverPort);
+                PrintWriter subOut = new PrintWriter(subSocket.getOutputStream());
+                BufferedReader subIn = new BufferedReader(new InputStreamReader(subSocket.getInputStream()));
+                System.out.println("Server Port : " + serverPort);
                 System.out.println("Server Index : " + serverIndex);
                 System.out.println("Welcome!");
-                System.out.println("Please enter username");
                 Scanner scan = new Scanner(System.in);
                 boolean continueLogin = true;
-                String username;
+                boolean goodInfo = false;
+                String username = "";
+                boolean loggedIn = false;
                 while (continueLogin) {
+                    System.out.println("Please enter username to proceed, enter exit to exit");
                     username = scan.nextLine();
-                    writeServer(username, subSocket);
-                    System.out.println("Please enter password");
-                    writeServer(scan.nextLine(), subSocket);
-                    String loginCheck = readServer(subSocket);
-                    if (loginCheck.equals("goodInfo")) {
-                        System.out.println("Login Successful, Welcome " + username);
+                    if (username.equals("exit")) {
                         continueLogin = false;
+                        writeServer(username, subOut);
                     } else {
-                        System.out.println("Login Failed, please try again");
+                        writeServer(username, subOut);
+                        System.out.println("Please enter password");
+                        writeServer(scan.nextLine(), subOut);
+                        String loginCheck = readServer(subIn);
+                        if (loginCheck.equals("goodInfo")) {
+                            System.out.println("Login Successful, Welcome " + username);
+                            continueLogin = false;
+                            loggedIn = true;
+                        } else {
+                            System.out.println("Login Failed, please try again");
+                        }
+                        // Users own profile will be displayed here
+                        while (loggedIn) {
+                            System.out.println("press 1 to view friends, 2 to view blocked, 3 to view messages, 4 to search for users and 5 to logout");
+                            String choice = scan.nextLine();
+                            writeServer(choice, subOut);
+                            if (choice.equals("1")) {
+                                int friendCount = Integer.parseInt(readServer(subIn));
+                                if (friendCount < 1) {
+                                    System.out.println("No friends");
+                                } else {
+                                    System.out.println("Friends:");
+                                    for (int i = 0; i < friendCount; i++) {
+                                        String friend = readServer(subIn);
+                                        writeServer("recieved", subOut);
+                                        System.out.println(friend);
+                                    }
+                                }
+                            } else if (choice.equals("2")) {
+                                int blockedCount = Integer.parseInt(readServer(subIn));
+                                if (blockedCount < 1) {
+                                    System.out.println("No blocked users");
+                                } else {
+                                    System.out.println("Blocked:");
+                                    for (int i = 0; i < blockedCount; i++) {
+                                        String blocked = readServer(subIn);
+                                        writeServer("recieved", subOut);
+                                        System.out.println(blocked);
+                                    }
+                                }
+                            } else if (choice.equals("3")) {
+                                int messageCount = Integer.parseInt(readServer(subIn));
+                                if (messageCount < 1) {
+                                    System.out.println("No messages");
+                                } else {
+                                    System.out.println("Messages:");
+                                    for (int i = 0; i < messageCount; i++) {
+                                        String message = readServer(subIn);
+                                        writeServer("recieved", subOut);
+                                        System.out.println(message);
+                                    }
+                                }
+                            } else if (choice.equals("4")) {
+                                System.out.println("Please enter username");
+                                String search = scan.nextLine();
+                                writeServer(search, subOut);
+                                String found = readServer(subIn);
+                                System.out.println(found);
+                                if (!found.equals("User not found")) {
+                                    System.out.println("1 to friend, 2 to block, 3 to remove friend, 4 to unblock");
+                                    String searchChoice = scan.nextLine();
+                                    writeServer(searchChoice, subOut);
+                                }
+                            } else if (choice.equals("5")) {
+                                System.out.println("Goodbye " + username);
+                                loggedIn = false;
+                                continueLogin = true;
+                            } else {
+                                System.out.println("Invalid choice");
+                            }
+                        }
                     }
                 }
             }
-            mainSocket.close(); //closes connection to main server
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,14 +127,13 @@ public class ChatClient {
 
     /**
      * A method to read the message the server sends
-     * @param socket the server to receive from
+     *
+     * @param in the server to receive from
      * @return returns the received message from the server
      */
-    public static String readServer(Socket socket) {
+    public static String readServer(BufferedReader in) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String s = in.readLine();
-            in.close();
             return s;
         } catch (IOException e) {
             return "Socket is not connected";
@@ -76,24 +142,15 @@ public class ChatClient {
 
     /**
      * A method that sends the inputted message to the server
+     *
      * @param msg the message to be sent
-     * @param socket the server socket that the message will be sent to
+     * @param out the server socket that the message will be sent to
      * @return return true if sent successfully and false otherwise
      */
-    public static boolean writeServer(String msg, Socket socket) {
-        // makes sure the socket is valid
-        try (Socket sckt = socket) {
-            // creates a print writer object to write to the server
-            PrintWriter writer = new PrintWriter(sckt.getOutputStream());
-            // writes the inputted msg to the server, then flushes the writer
-            writer.write(msg);
-            writer.println();
-            writer.flush();
-            // returns true if all things go smoothly
-            return true;
-        } catch (IOException e) {
-            // if the socket is invalid return false
-            return false;
-        }
+    public static void writeServer(String msg, PrintWriter out) {
+        out.write(msg);
+        out.println();
+        out.flush();
+        //System.out.println(msg + " sent");
     }
 }

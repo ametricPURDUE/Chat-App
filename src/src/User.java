@@ -12,7 +12,9 @@ public class User implements userTemplate{
     private String username;
     private String userFriendsFilename;
     private String userBlockedFilename;
+    private String userMessagesFilename;
     private ArrayList <User> friends = new ArrayList<>();
+    private ArrayList <String> messages = new ArrayList<>();
     private ArrayList <User> blocked = new ArrayList<>();
     private ArrayList <User> friendRequests = new ArrayList<>();
     private int age;
@@ -23,6 +25,7 @@ public class User implements userTemplate{
         this.username = username;
         this.age = age;
         this.userFriendsFilename = name + "_friends.txt";
+        this.userMessagesFilename = username + "_messages.txt";
         this.userBlockedFilename = name + "_blocked.txt";
     }
 
@@ -40,6 +43,7 @@ public class User implements userTemplate{
         }
         this.userFriendsFilename = name + "_friends.txt";
         this.userBlockedFilename = name + "_blocked.txt";
+        this.userMessagesFilename = username + "_messages.txt";
 
     }
     
@@ -65,6 +69,7 @@ public class User implements userTemplate{
     }
 
     public ArrayList<User> getBlocked() {
+        readBlocked();
         return blocked;
     }
 
@@ -88,6 +93,47 @@ public class User implements userTemplate{
         }
     }
 
+    public boolean writeMessages() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(userMessagesFilename))) {
+            for (String message: messages) {
+                bfw.write(message);
+                bfw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean newMessage(User user) {
+        String filename;
+        readMessages();
+        if (this.getUsername().compareTo(user.getUsername()) < 0) {
+            filename = "chat" + this.getUsername() + user.getUsername() + ".txt";
+        } else {
+            filename = "chat" + user.getUsername() + this.getUsername() + ".txt";
+        }
+        if (!messages.contains(filename)) {
+            messages.add(filename);
+            writeMessages();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean readMessages() {
+        try (BufferedReader bfr = new BufferedReader(new FileReader(userMessagesFilename))) {
+            String line;
+            messages = new ArrayList<String>();
+            while ((line = bfr.readLine()) != null) {
+                messages.add(line);
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
     /**
      * write the user's blocked list into a text file for saving
      * @return - return true if successful and false if not
@@ -170,6 +216,7 @@ public class User implements userTemplate{
     }
 
     public ArrayList<User> getFriends() {
+        readFriends();
         return friends;
     }
 
@@ -245,6 +292,10 @@ public class User implements userTemplate{
         this.age = age;
     }
 
+    public ArrayList<String> getMessages() {
+        readMessages();
+        return messages;
+    }
     @Override
     public String toString() {
         return String.format("%s,%s,%d", name, username, age);

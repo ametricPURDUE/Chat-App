@@ -30,8 +30,17 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
-    public ArrayList<User> getUsers() {
-        return userList;
+    public User getUsers(String username) {
+        readUsers();
+        synchronized(MAIN_LOCK) {
+            readUsers();
+            for(User user : userList) {
+                if(user.getUsername().equals(username)) {
+                    return user;
+                }
+            }
+        }
+        return null;
     }
     /**
      * reads the file "usernames.txt" and adds each username as a separate string in the usernames list
@@ -51,6 +60,21 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
+    public boolean readUsers() {
+        synchronized(MAIN_LOCK) {
+            try(BufferedReader bfr = new BufferedReader(new FileReader("users.txt"))) {
+                String line;
+                while ((line = bfr.readLine()) != null) {
+                    userList.add(new User(line));
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
+            } catch (IncorrectInput e) {
+                return false;
+            }
+        }
+    }
     /**
      * reads the file "passwords.txt" and adds each password as a separate string in the passwords list
      * @return - returns true if successful and false if not
@@ -86,7 +110,19 @@ public class ChatDatabase implements ChatDatabaseInterface {
             }
         }
     }
-
+    public boolean writeUsers() {
+        synchronized(MAIN_LOCK) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter("users.txt"))) {
+                for(User user: userList) {
+                    bfw.write(user.toString());
+                    bfw.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+    }
 
 
     /**
@@ -124,7 +160,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
     public boolean createUser(String data) throws IncorrectInput {
         synchronized(MAIN_LOCK) {
             String[] userData = data.split(",");
-            if (userData.length < 3) {
+            if (userData.length != 4) {
                 throw new IncorrectInput("Input string data formatted incorrectly");
             }
             int newAge = -1;
@@ -138,6 +174,10 @@ public class ChatDatabase implements ChatDatabaseInterface {
             }
             userList.add(new User(userData[0], userData[1], newAge));
             usernames.add(userData[1]);
+            passwords.add(userData[3]);
+            writeUsers();
+            writeUsernames();
+            writePasswords();
             return true;
         }
     }
@@ -169,7 +209,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
     public boolean modifyUser(User user, String data) throws IncorrectInput{
         synchronized(MAIN_LOCK) {
             String[] parts = data.split(",");
-            if (parts.length != 4) {
+            if (parts.length != 3) {
                 return false;
             }
             String name = parts[0];
@@ -179,14 +219,16 @@ public class ChatDatabase implements ChatDatabaseInterface {
             } catch (NumberFormatException e) {
                 return false;
             }
-            String username = parts[2];
-            String password = parts[3];
-            User newUser = new User(name, username, age);
+            String password = parts[2];
+            User newUser = new User(name, user.getUsername(), age);
             for (int i = 0; i < userList.size(); i++) {
                 if (userList.get(i).equals(user)) {
+                    readUsers();
+                    readPasswords();
                     userList.set(i, newUser);
-                    usernames.set(i, username);
                     passwords.set(i, password);
+                    writeUsers();
+                    writePasswords();
                     return true;
                 }
             }
@@ -253,7 +295,26 @@ public class ChatDatabase implements ChatDatabaseInterface {
                 }
             }
         }
-
+        public boolean login(String username, String password) {
+            synchronized (MAIN_LOCK) {
+                boolean found = false;
+                int index;
+                readPasswords();
+                readUsernames();
+                index = usernames.indexOf(username);
+                if (index != -1) {
+                    found = true;
+                } else {
+                    return false;
+                }
+                if (found) {
+                    if (password.equals(passwords.get(index))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
     }
 
 
