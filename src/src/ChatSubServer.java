@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-class ChatSubServer implements Runnable {
+class ChatSubServer implements Runnable, SubServerInterface {
     private int portNumber;
     ServerSocket serverSocket;
     private boolean running = false;
@@ -23,54 +23,54 @@ class ChatSubServer implements Runnable {
                 boolean loginCorrect = false;
                 String username = "";
                 while (!loginCorrect) {
-                    username = readClient(in);
+                    username = SubServerInterface.readClient(in);
                     if (username.equals("exit")) {
                         loggedIn = false;
                         loginCorrect = true;
                         running = false;
                     } else {
                         System.out.println(username);
-                        String password = readClient(in);
+                        String password = SubServerInterface.readClient(in);
                         System.out.println(password);
                         //code to check if username and password are correct store in variable goodInfo
                         boolean goodInfo = database.login(username, password);
                         System.out.println(goodInfo);
                         if (goodInfo) {
-                            writeClient("goodInfo", out);
+                            SubServerInterface.writeClient("goodInfo", out);
                             loginCorrect = true;
                         } else {
-                            writeClient("badInfo", out);
+                            SubServerInterface.writeClient("badInfo", out);
                         }
                     }
                 }
                 while (loggedIn) {
-                    String choice = readClient(in);
+                    String choice = SubServerInterface.readClient(in);
                     System.out.println(choice);
                     switch (choice) {
                         case "1" : //sends all friends to client to display
                             database.readUsernames();
                             ArrayList<User> friends = database.getUsers(username).getFriends();
-                            writeClient("" + friends.size(), out);
+                            SubServerInterface.writeClient("" + friends.size(), out);
                             for (User user : friends) {
                                 System.out.println(user.getUsername());
-                                writeClient(user.getUsername(), out);
-                                String s = readClient(in);
+                                SubServerInterface.writeClient(user.getUsername(), out);
+                                String s = SubServerInterface.readClient(in);
                                 //System.out.println(s);
                             }
                             break;
                         case "2" : //sends all blocked users to client to display
                             database.readUsernames();
                             ArrayList<User> blocked = database.getUsers(username).getBlocked();
-                            writeClient("" + blocked.size(), out);
+                            SubServerInterface.writeClient("" + blocked.size(), out);
                             for (User user : blocked) {
                                 System.out.println(user.getUsername());
-                                writeClient(user.getUsername(), out);
-                                String s = readClient(in);
+                                SubServerInterface.writeClient(user.getUsername(), out);
+                                String s = SubServerInterface.readClient(in);
                             }
                             break;
                         case "3":
                             ArrayList<String> messages = database.getUsers(username).getMessages();
-                            writeClient("" + messages.size(), out);
+                            SubServerInterface.writeClient("" + messages.size(), out);
                             for (String message : messages) {
                                 message = message.substring(4);
                                 if (message.indexOf(username) != 0) {
@@ -80,15 +80,15 @@ class ChatSubServer implements Runnable {
                                     message = message.substring(username.length(), message.length() - 4);
                                     System.out.println(message);;
                                 }
-                                writeClient(message, out);
-                                readClient(in);
+                                SubServerInterface.writeClient(message, out);
+                                SubServerInterface.readClient(in);
                             }
                             break;
                         case "4":
-                            String search = readClient(in);
+                            String search = SubServerInterface.readClient(in);
                             if (database.getUsers(search) != null) {
-                                writeClient(database.getUsers(search).toString(), out);
-                                String searchChoice = readClient(in);
+                                SubServerInterface.writeClient(database.getUsers(search).toString(), out);
+                                String searchChoice = SubServerInterface.readClient(in);
                                 System.out.println(searchChoice);
                                 if (searchChoice.equals("1")) {
                                     System.out.println("running");
@@ -104,7 +104,7 @@ class ChatSubServer implements Runnable {
                                 }
                             } else {
                                 System.out.println("bad");
-                                writeClient("User not found", out);
+                                SubServerInterface.writeClient("User not found", out);
                             }
                             break;
                         case "5":
@@ -121,28 +121,5 @@ class ChatSubServer implements Runnable {
     }
     public boolean portOpen() {
         return !running;
-    }
-    public static String readClient(BufferedReader in) {
-        try {
-            String s = in.readLine();
-            return s;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Socket is not connected1";
-        }
-    }
-
-    /**
-     * a method to send data to the client
-     * @param msg the message to be sent
-     * @param out the printwriter to use
-     * @return returns true if sent successfully and false otherwise
-     */
-    public static void writeClient(String msg, PrintWriter out) {
-        // writes and sends the msg to the client, then flushes the writer
-        out.write(msg);
-        out.println();
-        out.flush();
-        //System.out.println(msg + " sent");
     }
 }
