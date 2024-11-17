@@ -66,6 +66,12 @@ Class Descriptions :
      - Interface for subServer
      - has static read and write methods to interact with client
   
+I/O and Server Testing :
+- ChatClient and ChatSubServer connection tested extensively by inputting incorrect inputs.
+      - ex. Strings when ints are expected and vice versa, null strings
+- ChatClient and MainChatServer connection tested
+      - Does not accept any input
+      - Does not crash even when no open servers are available
 Test Descriptions:
     - ChatClient.java:
         - main(Strin[] args)
