@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 
-public class MainChatServer{
+public class MainChatServer implements MainServerInterface{
     private static boolean[] emptyPorts = new boolean[10];
     public static void main(String[] args){
         try {
