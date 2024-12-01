@@ -170,7 +170,7 @@ public class ChatDatabase implements ChatDatabaseInterface {
             if (userData.length != 4) {
                 throw new IncorrectInput("Input string data formatted incorrectly");
             }
-            int newAge = -1;
+            int newAge;
             try {
                 newAge = Integer.parseInt(userData[2]);
             } catch (NumberFormatException e) {
@@ -178,6 +178,12 @@ public class ChatDatabase implements ChatDatabaseInterface {
             }
             if (newAge < 0) {
                 throw new IncorrectInput("Age cannot be below 0");
+            }
+            readUsernames();
+            readUsers();
+            readPasswords();
+            if (usernames.contains(userData[1])) {
+                throw new IncorrectInput("Username already exists");
             }
             userList.add(new User(userData[0], userData[1], newAge));
             usernames.add(userData[1]);
@@ -309,6 +315,10 @@ public class ChatDatabase implements ChatDatabaseInterface {
                 }
                 return false;
             }
+        }
+        public ArrayList<String> getUsernames() {
+            readUsernames();
+            return usernames;
         }
     }
 

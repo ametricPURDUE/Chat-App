@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author AJ Metrick, Edward Ju, Nolan Shultz, Parshawn Haynes, Pranav Sangani
  * @version October 29, 2024
  */
-public interface userTemplate {
+public interface UserTemplate {
     public String getName();
     public void setName(String name);
     public String getUsername();

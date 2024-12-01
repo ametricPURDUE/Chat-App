@@ -79,7 +79,7 @@ public class RunLocalTest {
             modifiers = clazz.getModifiers();
             superclass = clazz.getSuperclass();
             superinterfaces = clazz.getInterfaces();
-            boolean implementsInterface = Arrays.asList(superinterfaces).contains(userTemplate.class);
+            boolean implementsInterface = Arrays.asList(superinterfaces).contains(UserTemplate.class);
 
             Assert.assertTrue("Ensure that `User` is `public`!", Modifier.isPublic(modifiers));
             Assert.assertFalse("Ensure that `User` is NOT `abstract`!", Modifier.isAbstract(modifiers));

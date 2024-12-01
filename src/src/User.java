@@ -7,7 +7,7 @@ import java.io.*;
  * @author AJ Metrick, Edward Ju, Nolan Shultz, Parshawn Haynes, Pranav Sangani
  * @version October 29, 2024
  */
-public class User implements userTemplate{
+public class User implements UserTemplate{
     private String name;
     private String username;
     private String userFriendsFilename;
