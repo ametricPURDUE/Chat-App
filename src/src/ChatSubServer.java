@@ -99,15 +99,18 @@ public class ChatSubServer implements Runnable, SubServerInterface {
     }
     public static void getMessages(PrintWriter out, BufferedReader in, String username) {
         ArrayList<String> messages = database.getUsers(username).getMessages();
+        ArrayList<String> recipients = new ArrayList<>();
         SubServerInterface.writeClient("" + messages.size(), out);
         for (String message : messages) {
             message = message.substring(4);
             if (message.indexOf(username) != 0) {
                 message = message.substring(0, message.indexOf(username));
+                recipients.add(message);
             } else {
                 System.out.println(message);
                 message = message.substring(username.length(), message.length() - 4);
                 System.out.println(message);;
+                recipients.add(message);
             }
             SubServerInterface.writeClient(message, out);
             SubServerInterface.readClient(in);
@@ -127,8 +130,21 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 SubServerInterface.writeClient("badInfo", out);
                 return;
             }
-            SubServerInterface.writeClient("YIPPEE", out);
+            SubServerInterface.writeClient("goodInfo", out);
             System.out.println("i = " + i);
+            ArrayList<String> message = database.readMessagesFromFile(username, recipients.get(i));
+            SubServerInterface.writeClient("" + message.size(), out);
+            for (int j = 0; j < message.size(); j++) {
+                SubServerInterface.writeClient(message.get(j), out);
+            }
+            while (true) {
+                String newMessage = SubServerInterface.readClient(in);
+                if (newMessage.equals("exit")) {
+                    break;
+                } else {
+                    database.writeMessageToFile(username, recipients.get(i), newMessage);
+                }
+            }
         }
     }
     public static void findUser(PrintWriter out, BufferedReader in, String username) {

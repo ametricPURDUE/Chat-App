@@ -222,8 +222,8 @@ public class ChatDatabase implements ChatDatabaseInterface {
      * input string data must be formatted "name,age,username,password"
      * @return - returns true user is found and modified and false if not
      */
-    public boolean modifyUser(User user, String data){
-        synchronized(MAIN_LOCK) {
+    public boolean modifyUser(User user, String data) {
+        synchronized (MAIN_LOCK) {
             String[] parts = data.split(",");
             if (parts.length != 3) {
                 return false;
@@ -251,7 +251,6 @@ public class ChatDatabase implements ChatDatabaseInterface {
             return false;
         }
     }
-
     public boolean writeMessageToFile(String senderUsername, String receiverUsername, String message) {
         synchronized(MAIN_LOCK) {
             String filename;
@@ -260,7 +259,6 @@ public class ChatDatabase implements ChatDatabaseInterface {
             } else {
                 filename = "chat" + receiverUsername + senderUsername + ".txt";
             }
-    
             try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
                 writer.println(senderUsername + ": " + message);
                 return true;

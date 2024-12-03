@@ -160,6 +160,20 @@ public class ChatClient implements ClientInterface{
         String choice = scan.nextLine();
         ClientInterface.writeServer(choice, out);
         String result = ClientInterface.readServer(in);
+        if (result.equals("goodInfo")) {
+            System.out.println("enter exit to exit");
+            int size = Integer.parseInt(ClientInterface.readServer(in));
+            for (int i = 0; i < size; i++) {
+                System.out.println(ClientInterface.readServer(in));
+            }
+            while (true) {
+                String s = scan.nextLine();
+                ClientInterface.writeServer(s, out);
+                if (s.equals("exit")) {
+                    break;
+                }
+            }
+        }
     }
     public static void viewUser(PrintWriter out, BufferedReader in) {
         System.out.println("Please enter username");
