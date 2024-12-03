@@ -155,6 +155,11 @@ public class ChatClient implements ClientInterface{
                 System.out.println(message);
             }
         }
+        System.out.println("Type the number of the message you would like to access or type exit to exit");
+        Scanner scan = new Scanner(System.in);
+        String choice = scan.nextLine();
+        ClientInterface.writeServer(choice, out);
+        String result = ClientInterface.readServer(in);
     }
     public static void viewUser(PrintWriter out, BufferedReader in) {
         System.out.println("Please enter username");
@@ -164,9 +169,18 @@ public class ChatClient implements ClientInterface{
         String found = ClientInterface.readServer(in);
         System.out.println(found);
         if (!found.equals("User not found")) {
-            System.out.println("1 to friend, 2 to block, 3 to remove friend, 4 to unblock");
+            System.out.println("1 to friend, 2 to block, 3 to remove friend, 4 to unblock, 5 to add new message (you can only message friends)");
             String searchChoice = scan.nextLine();
             ClientInterface.writeServer(searchChoice, out);
+            if (searchChoice.equals("5")) {
+                String exists = ClientInterface.readServer(in);
+                System.out.println(exists);
+                if (exists.equals("not exists")) {
+                    System.out.println("Conversation Created");
+                } else {
+                    System.out.println("You have already messaged this user");
+                }
+            }
         }
     }
 }

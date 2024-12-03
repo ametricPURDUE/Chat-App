@@ -112,6 +112,24 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             SubServerInterface.writeClient(message, out);
             SubServerInterface.readClient(in);
         }
+        String choice = SubServerInterface.readClient(in);
+        if (!choice.equals("exit")) {
+            int i = -1;
+            try {
+                i = Integer.parseInt(choice);
+            } catch (NumberFormatException e) {
+                System.out.println("oops#1");
+                SubServerInterface.writeClient("badInfo", out);
+                return;
+            }
+            if (i < 0 || i >= messages.size()) {
+                System.out.println("oops#2");
+                SubServerInterface.writeClient("badInfo", out);
+                return;
+            }
+            SubServerInterface.writeClient("YIPPEE", out);
+            System.out.println("i = " + i);
+        }
     }
     public static void findUser(PrintWriter out, BufferedReader in, String username) {
         String search = SubServerInterface.readClient(in);
@@ -130,6 +148,23 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 database.getUsers(username).removeFriend(database.getUsers(search));
             } else if (searchChoice.equals("4")) {
                 database.getUsers(username).unblockUser(database.getUsers(search));
+            } else if (searchChoice.equals("5")) {
+                String filename;
+                if (username.compareTo(search) < 0) {
+                    filename = "chat" + username + search + ".txt";
+                } else {
+                    filename = "chat" + search + username + ".txt";
+                }
+                File file = new File(filename);
+                if (file.isFile()) {
+                    SubServerInterface.writeClient("exists", out);
+                    System.out.println("exists");
+                } else {
+                    SubServerInterface.writeClient("not exists", out);
+                    database.getUsers(username).newMessage(database.getUsers(search));
+                    database.getUsers(search).newMessage(database.getUsers(username));
+                    System.out.println("not exists");
+                }
             }
         } else {
             System.out.println("bad");
@@ -176,5 +211,6 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                     }
                 }
             }
-        }}
+        }
+    }
 }
