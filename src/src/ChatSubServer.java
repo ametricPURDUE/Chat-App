@@ -23,14 +23,16 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 boolean loginCorrect = false;
                 String username = "";
                 while (!loginCorrect) {
-                    username = SubServerInterface.readClient(in);
-                    if (username.equals("exit")) {
+                    String type = SubServerInterface.readClient(in);
+                    if (type.equals("exit")) {
                         loggedIn = false;
                         loginCorrect = true;
                         running = false;
-                    } else if (username.equals("Create")) {
+                    } else if (type.equals("Create")) {
+                        System.out.println("Creating");
                         createUser(out, in);
-                    } else {
+                    } else if (type.equals("login")) {
+                        username = SubServerInterface.readClient(in);
                         System.out.println(username);
                         String password = SubServerInterface.readClient(in);
                         System.out.println(password);
