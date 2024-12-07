@@ -192,6 +192,8 @@ public class ChatClient implements ClientInterface {
         settingsPanel.setLayout(settingsLayout);
         settingsPanel.add(changeNameLabel);
         settingsPanel.add(changeNameButton);
+        settingsPanel.add(changeAgeLabel);
+        settingsPanel.add(changeAgeButton);
         settingsPanel.add(changePasswordLabel);
         settingsPanel.add(changePasswordButton);
         settingsPanel.add(setModeLabel);
@@ -200,46 +202,45 @@ public class ChatClient implements ClientInterface {
         settingsPanel.add(defaultModeButton);
         //frame.add(settingsPanel, BorderLayout.CENTER);
 
-        //set the constraints for the username change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameLabel, 70,
-                SpringLayout.NORTH, settingsPanel);
-        //set the constraints for the username change button
-        settingsLayout.putConstraint(SpringLayout.WEST, changeNameButton, 120,
-                SpringLayout.WEST, changeNameLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameButton, 65,
-                SpringLayout.NORTH, settingsPanel);
+        //set the constraints for the name change label
+        settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100, SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameLabel, 70, SpringLayout.NORTH, settingsPanel);
+
+        //set the constraints for the name change button
+        settingsLayout.putConstraint(SpringLayout.WEST, changeNameButton, 120, SpringLayout.WEST, changeNameLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameButton, 65, SpringLayout.NORTH, settingsPanel);
+
+        //set the constraints for the age change label
+        settingsLayout.putConstraint(SpringLayout.WEST, changeAgeLabel, 100, SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeLabel, 50, SpringLayout.NORTH, changeNameLabel);
+
+        //set the constraints for the age change button
+        settingsLayout.putConstraint(SpringLayout.WEST, changeAgeButton, 120, SpringLayout.WEST, changeAgeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeButton, 50, SpringLayout.NORTH, changeNameLabel);
+
         //set the constraints for the password change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50,
-                SpringLayout.NORTH, changeNameLabel);
+        settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100, SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50, SpringLayout.NORTH, changeAgeLabel);
+
         //set the constraints for the password change button
-        settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120,
-                SpringLayout.WEST, changePasswordLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50,
-                SpringLayout.NORTH, changeNameButton);
+        settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120, SpringLayout.WEST, changeAgeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50, SpringLayout.NORTH, changeAgeButton);
+
         //set the constraints for the color mode label
-        settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50,
-                SpringLayout.NORTH, changePasswordLabel);
+        settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100, SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50, SpringLayout.NORTH, changePasswordLabel);
+
         //set the constraints for the light mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50,
-                SpringLayout.NORTH, changePasswordButton);
+        settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140, SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50, SpringLayout.NORTH, changePasswordButton);
+
         //set the constraints for the dark mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30,
-                SpringLayout.NORTH, lightModeButton);
+        settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140, SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30, SpringLayout.NORTH, lightModeButton);
+
         //set the constraints for the default mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30,
-                SpringLayout.NORTH, darkModeButton);
+        settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140, SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30, SpringLayout.NORTH, darkModeButton);
 
         try {
             Socket mainSocket = new Socket("localhost", 4242); // Connects to main server
