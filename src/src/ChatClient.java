@@ -198,7 +198,7 @@ public class ChatClient implements ClientInterface {
         settingsPanel.add(lightModeButton);
         settingsPanel.add(darkModeButton);
         settingsPanel.add(defaultModeButton);
-        frame.add(settingsPanel, BorderLayout.CENTER);
+        //frame.add(settingsPanel, BorderLayout.CENTER);
 
         //set the constraints for the username change label
         settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100,
