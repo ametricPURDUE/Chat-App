@@ -9,101 +9,6 @@ public class ChatClient implements ClientInterface {
     private static Color backgroundColor = Color.LIGHT_GRAY;
     private ChatDatabase database;
     private String username;
-    public void createSettings(JPanel sidePanel) {
-        //create the base settings page
-        JFrame frame = new JFrame("Settings");
-        Container settings = frame.getContentPane();
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setBackground(backgroundColor);
-        settings.add(sidePanel, BorderLayout.WEST);
-        frame.setVisible(true);
-        SpringLayout settingsLayout = new SpringLayout();
-
-        //add the content to the settings page
-        JLabel changeUsernameLabel = new JLabel("Change Username:");
-        JButton changeUsernameButton = new JButton("Change Username");
-        JLabel changePasswordLabel = new JLabel("Change Password:");
-        JButton changePasswordButton = new JButton("Change Password");
-
-        //sets the background colors
-        JLabel setModeLabel = new JLabel("Set Background Mode:");
-        JButton lightModeButton = new JButton("Light");
-        lightModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                backgroundColor = Color.WHITE;
-                frame.setBackground(backgroundColor);
-            }
-        });
-        JButton darkModeButton = new JButton("Dark");
-        darkModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                backgroundColor = Color.BLACK;
-                frame.setBackground(backgroundColor);
-            }
-        });
-        JButton defaultModeButton = new JButton("Default");
-        defaultModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                backgroundColor = Color.LIGHT_GRAY;
-                frame.setBackground(backgroundColor);
-            }
-        });
-
-        JPanel settingsPanel = new JPanel();
-        settingsPanel.setLayout(settingsLayout);
-        settingsPanel.add(changeUsernameLabel);
-        settingsPanel.add(changeUsernameButton);
-        settingsPanel.add(changePasswordLabel);
-        settingsPanel.add(changePasswordButton);
-        settingsPanel.add(setModeLabel);
-        settingsPanel.add(lightModeButton);
-        settingsPanel.add(darkModeButton);
-        settingsPanel.add(defaultModeButton);
-        frame.add(settingsPanel, BorderLayout.CENTER);
-
-        //set the constraints for the username change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameLabel, 70,
-                SpringLayout.NORTH, settingsPanel);
-        //set the constraints for the username change button
-        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameButton, 120,
-                SpringLayout.WEST, changeUsernameLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameButton, 65,
-                SpringLayout.NORTH, settingsPanel);
-        //set the constraints for the password change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50,
-                SpringLayout.NORTH, changeUsernameLabel);
-        //set the constraints for the password change button
-        settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120,
-                SpringLayout.WEST, changePasswordLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50,
-                SpringLayout.NORTH, changeUsernameButton);
-        //set the constraints for the color mode label
-        settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100,
-                SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50,
-                SpringLayout.NORTH, changePasswordLabel);
-        //set the constraints for the light mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50,
-                SpringLayout.NORTH, changePasswordButton);
-        //set the constraints for the dark mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30,
-                SpringLayout.NORTH, lightModeButton);
-        //set the constraints for the default mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140,
-                SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30,
-                SpringLayout.NORTH, darkModeButton);
-    }
 
     public static void main(String[] args) {
         int serverPort;
@@ -127,18 +32,11 @@ public class ChatClient implements ClientInterface {
         JButton accountButton = new JButton("Account");
         JButton messagesButton = new JButton("Messages");
         JButton settingsButton = new JButton("Settings");
-        settingsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                client.createSettings(sidePanel);
-            }
-        });
 
         messagesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (client.username != null) {
                     frame.getContentPane().remove(frame.getContentPane().getComponent(1));
-
                     ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
                     messagesScreen.createMessagesScreen(frame);
                     frame.revalidate();
@@ -253,7 +151,89 @@ public class ChatClient implements ClientInterface {
         createScreenLayout.putConstraint(SpringLayout.WEST, createButton, 275, SpringLayout.WEST, createScreen);
         //createScreenLayout.putConstraint(SpringLayout.EAST, createButton, 375, SpringLayout.WEST, createScreen);
         createScreenLayout.putConstraint(SpringLayout.NORTH, createButton, 30, SpringLayout.SOUTH, ageInput);
+//add the content to the settings page
+        JLabel changeUsernameLabel = new JLabel("Change Username:");
+        JButton changeUsernameButton = new JButton("Change Username");
+        JLabel changePasswordLabel = new JLabel("Change Password:");
+        JButton changePasswordButton = new JButton("Change Password");
 
+        //sets the background colors
+        JLabel setModeLabel = new JLabel("Set Background Mode:");
+        JButton lightModeButton = new JButton("Light");
+        lightModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundColor = Color.WHITE;
+                frame.setBackground(backgroundColor);
+            }
+        });
+        JButton darkModeButton = new JButton("Dark");
+        darkModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundColor = Color.BLACK;
+                frame.setBackground(backgroundColor);
+            }
+        });
+        JButton defaultModeButton = new JButton("Default");
+        defaultModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundColor = Color.LIGHT_GRAY;
+                frame.setBackground(backgroundColor);
+            }
+        });
+
+        JPanel settingsPanel = new JPanel();
+        SpringLayout settingsLayout = new SpringLayout();
+        settingsPanel.setLayout(settingsLayout);
+        settingsPanel.add(changeUsernameLabel);
+        settingsPanel.add(changeUsernameButton);
+        settingsPanel.add(changePasswordLabel);
+        settingsPanel.add(changePasswordButton);
+        settingsPanel.add(setModeLabel);
+        settingsPanel.add(lightModeButton);
+        settingsPanel.add(darkModeButton);
+        settingsPanel.add(defaultModeButton);
+        frame.add(settingsPanel, BorderLayout.CENTER);
+
+        //set the constraints for the username change label
+        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameLabel, 100,
+                SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameLabel, 70,
+                SpringLayout.NORTH, settingsPanel);
+        //set the constraints for the username change button
+        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameButton, 120,
+                SpringLayout.WEST, changeUsernameLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameButton, 65,
+                SpringLayout.NORTH, settingsPanel);
+        //set the constraints for the password change label
+        settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100,
+                SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50,
+                SpringLayout.NORTH, changeUsernameLabel);
+        //set the constraints for the password change button
+        settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120,
+                SpringLayout.WEST, changePasswordLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50,
+                SpringLayout.NORTH, changeUsernameButton);
+        //set the constraints for the color mode label
+        settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100,
+                SpringLayout.WEST, settingsPanel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50,
+                SpringLayout.NORTH, changePasswordLabel);
+        //set the constraints for the light mode button
+        settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140,
+                SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50,
+                SpringLayout.NORTH, changePasswordButton);
+        //set the constraints for the dark mode button
+        settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140,
+                SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30,
+                SpringLayout.NORTH, lightModeButton);
+        //set the constraints for the default mode button
+        settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140,
+                SpringLayout.WEST, setModeLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30,
+                SpringLayout.NORTH, darkModeButton);
 
         try {
             Socket mainSocket = new Socket("localhost", 4242); // Connects to main server
@@ -297,7 +277,16 @@ public class ChatClient implements ClientInterface {
                     }
                 });
 
-
+                settingsButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        frame.add(settingsPanel);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
                 newUserButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         ClientInterface.writeServer("Create", subOut);
