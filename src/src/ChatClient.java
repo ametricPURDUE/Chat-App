@@ -7,6 +7,8 @@ import java.awt.*;
 
 public class ChatClient implements ClientInterface {
     private static Color backgroundColor = Color.LIGHT_GRAY;
+    private ChatDatabase database;
+    private String username;
     public void createSettings(JPanel sidePanel) {
         //create the base settings page
         JFrame frame = new JFrame("Settings");
@@ -108,6 +110,7 @@ public class ChatClient implements ClientInterface {
         int serverIndex;
         boolean hasServer = true;
         ChatClient client = new ChatClient();
+        client.database = new ChatDatabase(); // Initialize the database
         JFrame frame = new JFrame("Chat App");
         Container home = frame.getContentPane();
         frame.setSize(600, 400);
@@ -130,6 +133,19 @@ public class ChatClient implements ClientInterface {
                 client.createSettings(sidePanel);
             }
         });
+
+        messagesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (client.database != null && client.username != null) {
+                    frame.dispose();
+                    ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.database, client.username);
+                    messagesScreen.createMessagesScreen(sidePanel);
+                } else {
+                    System.out.println("Error: Database or username not initialized");
+                }
+            }
+        });
+
 
         //adds the buttons on top of each other
         sidePanel.add(accountButton);
@@ -264,19 +280,22 @@ public class ChatClient implements ClientInterface {
                 //action listener for the login button
                 loginButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        String username = usernameInput.getText();
+                        String enteredUsername = usernameInput.getText();
                         String password = passwordInput.getText();
                         ClientInterface.writeServer("login", subOut);
-                        ClientInterface.writeServer(username, subOut);
+                        ClientInterface.writeServer(enteredUsername, subOut);
                         ClientInterface.writeServer(password, subOut);
                         String loginCheck = ClientInterface.readServer(subIn);
                         if (loginCheck.equals("goodInfo")) {
-                            System.out.println("Login Successful, Welcome " + username);
+                            client.username = enteredUsername; // Set username
+                            System.out.println("Login Successful, Welcome " + client.username);
                         } else {
                             System.out.println("Login Failed, please try again");
                         }
                     }
                 });
+
+
                 newUserButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         ClientInterface.writeServer("Create", subOut);

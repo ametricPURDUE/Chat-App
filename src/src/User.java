@@ -164,6 +164,7 @@ public class User implements UserTemplate{
      * Reads the [user]_friends.txt file and adds each line to a friends array as a new user
      * @return - returns true if successful and false if not
      */
+
     public boolean readFriends() {
         synchronized (lock) {
             try (BufferedReader bfr = new BufferedReader(new FileReader(userFriendsFilename))) {
@@ -171,6 +172,8 @@ public class User implements UserTemplate{
                 setFriends(new ArrayList<User>());
                 while ((line = bfr.readLine()) != null) {
                     friends.add(new User(line));
+                    System.out.println("Trying to load friends file from: " + new File(userFriendsFilename).getAbsolutePath());
+
                 }
                 return true;
             } catch (IOException | IncorrectInput e) {
