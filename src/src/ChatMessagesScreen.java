@@ -1,110 +1,111 @@
+import java.io.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.*;
 
 public class ChatMessagesScreen {
+    private String username;
 
-    private ChatDatabase database; // Access to backend database
-    private String username; // Currently logged-in user
-
-    public ChatMessagesScreen(ChatDatabase database, String username) {
-        this.database = database;
+    public ChatMessagesScreen(String username) {
         this.username = username;
     }
 
-    public void createMessagesScreen(JPanel sidePanel) {
-        // Set up the frame
-        JFrame frame = new JFrame("Messages");
-        Container messages = frame.getContentPane();
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setBackground(Color.LIGHT_GRAY);
-        messages.add(sidePanel, BorderLayout.WEST);
-        frame.setVisible(true);
+    public void createMessagesScreen(JFrame frame) {
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Set up the main layout
-        SpringLayout layout = new SpringLayout();
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(layout);
-
-        // Add search bar components
-        JLabel searchLabel = new JLabel("Search:");
-        JTextField searchField = new JTextField(20);
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        JTextField searchField = new JTextField();
+        JLabel searchLabel = new JLabel("Search Conversations:");
         JButton searchButton = new JButton("Search");
-        mainPanel.add(searchLabel);
-        mainPanel.add(searchField);
-        mainPanel.add(searchButton);
 
-        // Add scrollable message list
-        JPanel messageListPanel = new JPanel();
-        messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.Y_AXIS));
-        JScrollPane scrollPane = new JScrollPane(messageListPanel);
+        searchPanel.add(searchLabel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+        JPanel conversationPanel = new JPanel();
+        conversationPanel.setLayout(new BoxLayout(conversationPanel, BoxLayout.Y_AXIS));
+
+        ArrayList<String> conversations = getConversationsForUser();
+        populateConversationList(conversationPanel, conversations);
+
+        JScrollPane scrollPane = new JScrollPane(conversationPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        mainPanel.add(scrollPane);
 
-        // Set layout constraints
-        layout.putConstraint(SpringLayout.WEST, searchLabel, 10, SpringLayout.WEST, mainPanel);
-        layout.putConstraint(SpringLayout.NORTH, searchLabel, 10, SpringLayout.NORTH, mainPanel);
+        mainPanel.add(searchPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        layout.putConstraint(SpringLayout.WEST, searchField, 10, SpringLayout.EAST, searchLabel);
-        layout.putConstraint(SpringLayout.NORTH, searchField, 10, SpringLayout.NORTH, mainPanel);
+        frame.add(mainPanel, BorderLayout.CENTER);
 
-        layout.putConstraint(SpringLayout.WEST, searchButton, 10, SpringLayout.EAST, searchField);
-        layout.putConstraint(SpringLayout.NORTH, searchButton, 10, SpringLayout.NORTH, mainPanel);
-
-        layout.putConstraint(SpringLayout.WEST, scrollPane, 10, SpringLayout.WEST, mainPanel);
-        layout.putConstraint(SpringLayout.NORTH, scrollPane, 20, SpringLayout.SOUTH, searchLabel);
-        layout.putConstraint(SpringLayout.EAST, scrollPane, -10, SpringLayout.EAST, mainPanel);
-        layout.putConstraint(SpringLayout.SOUTH, scrollPane, -10, SpringLayout.SOUTH, mainPanel);
-
-        // Add friends to the message list
-        ArrayList<User> friends = database.getUsers(username).getFriends();
-        populateMessageList(messageListPanel, friends);
-
-        // Search button functionality (updates list only when clicked)
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String searchQuery = searchField.getText().toLowerCase();
-                ArrayList<User> filteredFriends = new ArrayList<>();
-                for (User friend : friends) {
-                    if (friend.getUsername().toLowerCase().contains(searchQuery)) {
-                        filteredFriends.add(friend);
+                String searchTerm = searchField.getText().toLowerCase();
+                ArrayList<String> filteredConversations = new ArrayList<>();
+                for (String conversation : conversations) {
+                    String displayName = getFriendlyName(conversation);
+                    if (displayName.toLowerCase().contains(searchTerm)) {
+                        filteredConversations.add(conversation);
                     }
                 }
-                populateMessageList(messageListPanel, filteredFriends);
-                messageListPanel.revalidate();
-                messageListPanel.repaint();
+                populateConversationList(conversationPanel, filteredConversations);
+                conversationPanel.revalidate();
+                conversationPanel.repaint();
+            }
+        });
+    }
+
+    private void populateConversationList(JPanel conversationPanel, ArrayList<String> conversations) {
+        conversationPanel.removeAll();
+        for (String conversation : conversations) {
+            String displayName = getFriendlyName(conversation);
+            conversationPanel.add(createConversationPanel(conversation, displayName));
+            conversationPanel.add(Box.createVerticalStrut(10));
+        }
+    }
+    private JPanel createConversationPanel(String conversation, String displayName) {
+        JPanel conversationPanel = new JPanel(new BorderLayout());
+        conversationPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        conversationPanel.setPreferredSize(new Dimension(450, 50));
+
+        JLabel conversationLabel = new JLabel(displayName);
+        conversationLabel.setFont(new Font("Georgia", Font.BOLD, 14));
+
+        JButton openChatButton = new JButton("Open Chat");
+        openChatButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openConversation(conversation);
             }
         });
 
-        // Add main panel to frame
-        frame.add(mainPanel, BorderLayout.CENTER);
+        conversationPanel.add(conversationLabel, BorderLayout.CENTER);
+        conversationPanel.add(openChatButton, BorderLayout.EAST);
+
+        return conversationPanel;
     }
 
-    private void populateMessageList(JPanel panel, ArrayList<User> friends) {
-        panel.removeAll(); // Clear the panel
-        for (User friend : friends) {
-            // Create a panel for each user
-            JPanel userPanel = new JPanel();
-            userPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            userPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            userPanel.setPreferredSize(new Dimension(400, 50));
+    private void openConversation(String conversation) {
+        System.out.println("Opening conversation: " + conversation);
+    }
 
-            JLabel userNameLabel = new JLabel(friend.getUsername());
-            JButton openChatButton = new JButton("Open Chat");
-
-            openChatButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("Opening conversation with " + friend.getUsername());
+    private ArrayList<String> getConversationsForUser() {
+        ArrayList<String> conversations = new ArrayList<>();
+        File directory = new File(System.getProperty("user.dir"));
+        if (directory.exists() && directory.isDirectory()) {
+            for (File file : directory.listFiles()) {
+                if (file.getName().startsWith("chat") && file.getName().contains(username)) {
+                    conversations.add(file.getName());
                 }
-            });
-
-            userPanel.add(userNameLabel);
-            userPanel.add(openChatButton);
-            panel.add(userPanel);
+            }
         }
+        return conversations;
+    }
+
+    private String getFriendlyName(String conversation) {
+        String strippedName = conversation.replace("chat", "").replace(".txt", "");
+        strippedName = strippedName.replace(username, "");
+        if (!strippedName.isEmpty()) {
+            strippedName = strippedName.substring(0, 1).toUpperCase() + strippedName.substring(1);
+        }
+        return strippedName.trim();
     }
 }

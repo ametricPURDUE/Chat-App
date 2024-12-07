@@ -136,16 +136,18 @@ public class ChatClient implements ClientInterface {
 
         messagesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (client.database != null && client.username != null) {
-                    frame.dispose();
-                    ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.database, client.username);
-                    messagesScreen.createMessagesScreen(sidePanel);
+                if (client.username != null) {
+                    frame.getContentPane().remove(frame.getContentPane().getComponent(1));
+
+                    ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
+                    messagesScreen.createMessagesScreen(frame);
+                    frame.revalidate();
+                    frame.repaint();
                 } else {
-                    System.out.println("Error: Database or username not initialized");
+                    System.out.println("Error: Username not initialized");
                 }
             }
         });
-
 
         //adds the buttons on top of each other
         sidePanel.add(accountButton);
