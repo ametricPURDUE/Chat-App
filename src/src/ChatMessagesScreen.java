@@ -6,16 +6,24 @@ import java.awt.event.*;
 
 public class ChatMessagesScreen {
     private String username;
+    private Color background;
 
     public ChatMessagesScreen(String username) {
         this.username = username;
     }
 
-    public void createMessagesScreen(JFrame frame) {
+    public void createMessagesScreen(JFrame frame, Color background) {
         JPanel mainPanel = new JPanel(new BorderLayout());
-
+        this.background = background;
         JPanel searchPanel = new JPanel(new BorderLayout());
         JTextField searchField = new JTextField();
+        if (background.equals(new Color(50, 50, 50))) {
+            searchField.setBackground(new Color(75, 75, 75));
+        } else if (background.equals(new Color(255, 255, 255))) {
+            searchField.setBackground(new Color(225, 225, 225));
+        } else {
+            searchField.setBackground(new Color (170, 170, 170));
+        }
         JLabel searchLabel = new JLabel("Search Conversations:");
         JButton searchButton = new JButton("Search");
 
@@ -34,6 +42,9 @@ public class ChatMessagesScreen {
 
         mainPanel.add(searchPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
+        searchPanel.setBackground(background);
+        scrollPane.setBackground(background);
+        mainPanel.setBackground(background);
 
         frame.add(mainPanel, BorderLayout.CENTER);
 
@@ -65,6 +76,7 @@ public class ChatMessagesScreen {
     private JPanel createConversationPanel(String conversation, String displayName) {
         JPanel conversationPanel = new JPanel(new BorderLayout());
         conversationPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        conversationPanel.setBackground(background);
         conversationPanel.setPreferredSize(new Dimension(450, 50));
 
         JLabel conversationLabel = new JLabel(displayName);

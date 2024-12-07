@@ -36,9 +36,11 @@ public class ChatClient implements ClientInterface {
         messagesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (client.username != null) {
-                    frame.getContentPane().remove(frame.getContentPane().getComponent(1));
+                    while (frame.getContentPane().getComponentCount() > 1) {
+                        frame.getContentPane().remove(1);
+                    }
                     ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
-                    messagesScreen.createMessagesScreen(frame);
+                    messagesScreen.createMessagesScreen(frame, backgroundColor);
                     frame.revalidate();
                     frame.repaint();
                 } else {
@@ -152,10 +154,12 @@ public class ChatClient implements ClientInterface {
         //createScreenLayout.putConstraint(SpringLayout.EAST, createButton, 375, SpringLayout.WEST, createScreen);
         createScreenLayout.putConstraint(SpringLayout.NORTH, createButton, 30, SpringLayout.SOUTH, ageInput);
 //add the content to the settings page
-        JLabel changeUsernameLabel = new JLabel("Change Username:");
-        JButton changeUsernameButton = new JButton("Change Username");
+        JLabel changeNameLabel = new JLabel("Change Name:");
+        JButton changeNameButton = new JButton("Change Name");
         JLabel changePasswordLabel = new JLabel("Change Password:");
         JButton changePasswordButton = new JButton("Change Password");
+        JLabel changeAgeLabel = new JLabel("Change Age:");
+        JButton changeAgeButton = new JButton("Change Age");
 
         //sets the background colors
         JLabel setModeLabel = new JLabel("Set Background Mode:");
@@ -163,29 +167,31 @@ public class ChatClient implements ClientInterface {
         lightModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 backgroundColor = Color.WHITE;
-                frame.setBackground(backgroundColor);
+                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
+
             }
         });
         JButton darkModeButton = new JButton("Dark");
         darkModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                backgroundColor = Color.BLACK;
-                frame.setBackground(backgroundColor);
+                backgroundColor = new Color(50, 50, 50);
+
+                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
             }
         });
         JButton defaultModeButton = new JButton("Default");
         defaultModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 backgroundColor = Color.LIGHT_GRAY;
-                frame.setBackground(backgroundColor);
+                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
             }
         });
 
         JPanel settingsPanel = new JPanel();
         SpringLayout settingsLayout = new SpringLayout();
         settingsPanel.setLayout(settingsLayout);
-        settingsPanel.add(changeUsernameLabel);
-        settingsPanel.add(changeUsernameButton);
+        settingsPanel.add(changeNameLabel);
+        settingsPanel.add(changeNameButton);
         settingsPanel.add(changePasswordLabel);
         settingsPanel.add(changePasswordButton);
         settingsPanel.add(setModeLabel);
@@ -195,25 +201,25 @@ public class ChatClient implements ClientInterface {
         frame.add(settingsPanel, BorderLayout.CENTER);
 
         //set the constraints for the username change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameLabel, 100,
+        settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100,
                 SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameLabel, 70,
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameLabel, 70,
                 SpringLayout.NORTH, settingsPanel);
         //set the constraints for the username change button
-        settingsLayout.putConstraint(SpringLayout.WEST, changeUsernameButton, 120,
-                SpringLayout.WEST, changeUsernameLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeUsernameButton, 65,
+        settingsLayout.putConstraint(SpringLayout.WEST, changeNameButton, 120,
+                SpringLayout.WEST, changeNameLabel);
+        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameButton, 65,
                 SpringLayout.NORTH, settingsPanel);
         //set the constraints for the password change label
         settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100,
                 SpringLayout.WEST, settingsPanel);
         settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50,
-                SpringLayout.NORTH, changeUsernameLabel);
+                SpringLayout.NORTH, changeNameLabel);
         //set the constraints for the password change button
         settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120,
                 SpringLayout.WEST, changePasswordLabel);
         settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50,
-                SpringLayout.NORTH, changeUsernameButton);
+                SpringLayout.NORTH, changeNameButton);
         //set the constraints for the color mode label
         settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100,
                 SpringLayout.WEST, settingsPanel);
@@ -279,12 +285,16 @@ public class ChatClient implements ClientInterface {
 
                 settingsButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if (frame.getContentPane().getComponentCount() > 1) {
-                            frame.getContentPane().remove(1);
+                        if (client.username != null) {
+                            while (frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            frame.add(settingsPanel);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            System.out.println("Username not initialized");
                         }
-                        frame.add(settingsPanel);
-                        frame.revalidate();
-                        frame.repaint();
                     }
                 });
                 newUserButton.addActionListener(new ActionListener() {
