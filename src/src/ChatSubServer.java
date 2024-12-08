@@ -84,6 +84,12 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                         case "9":
                             viewBlocked(out, in, username);
                             break;
+                        case "10":
+                            removeFriend(out, in, username);
+                            break;
+                        case "11":
+                            removeBlocked(out, in, username);
+                            break;
                     }
                 }
 
@@ -195,7 +201,17 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             SubServerInterface.writeClient("User not found", out);
         }
     }
-
+    public static void removeFriend(PrintWriter out, BufferedReader in, String username) {
+        String search = SubServerInterface.readClient(in);
+        System.out.println("removing " + search);
+        database.getUsers(search).removeFriend(database.getUsers(search));
+        database.getUsers(username).removeFriend(database.getUsers(search));
+    }
+    public static void removeBlocked(PrintWriter out, BufferedReader in, String username) {
+        String search = SubServerInterface.readClient(in);
+        System.out.println("unblocking " + search);
+        database.getUsers(username).unblockUser(database.getUsers(search));
+    }
     public static void createUser(PrintWriter out, BufferedReader in) {
         String newUsername = SubServerInterface.readClient(in);
         ArrayList<String> usernames = database.getUsernames();

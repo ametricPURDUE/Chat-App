@@ -505,8 +505,33 @@ public class ChatClient implements ClientInterface {
                             for (int i = 0; i < friendCount; i++) {
                                 String friend = ClientInterface.readServer(subIn);
                                 ClientInterface.writeServer("recieved", subOut);
+                                JPanel oneFriend = new JPanel(new BorderLayout());
                                 JLabel friendLabel = new JLabel(friend);
-                                friendsPanel.add(friendLabel);
+                                JButton removeButton = new JButton("Remove " + friend);
+                                removeButton.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        SubServerInterface.writeClient("10", subOut);
+                                        SubServerInterface.writeClient(friend, subOut);
+                                        System.out.println(friend);
+                                        SubServerInterface.writeClient("exit", subOut);
+                                        while(frame.getContentPane().getComponentCount() > 1) {
+                                            frame.getContentPane().remove(1);
+                                        }
+                                        ClientInterface.writeServer("1", subOut);
+                                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        friends.setText("" + client.friendCount);
+                                        ClientInterface.writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.blockedCount);
+                                        frame.add(accountScreen);
+                                        frame.revalidate();
+                                        frame.repaint();
+                                    }
+                                });
+                                oneFriend.add(friendLabel, BorderLayout.CENTER);
+                                oneFriend.add(removeButton, BorderLayout.EAST);
+                                oneFriend.setMaximumSize(new Dimension(4500, 20));
+                                friendsPanel.add(oneFriend);
                                 friendsPanel.add(Box.createVerticalStrut(3));
                             }
                             JScrollPane scrollPane = new JScrollPane(friendsPanel);
@@ -526,8 +551,8 @@ public class ChatClient implements ClientInterface {
                         int blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
                         if (blockedCount < 1) {
                             blockedPanel.removeAll();
-                            JLabel noFriends = new JLabel("No Blocked Users");
-                            blockedPanel.add(noFriends);
+                            JLabel noBlocked = new JLabel("No Blocked Users");
+                            blockedPanel.add(noBlocked);
                             JScrollPane scrollPane = new JScrollPane(blockedPanel);
                             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
                             frame.add(scrollPane);
@@ -536,10 +561,35 @@ public class ChatClient implements ClientInterface {
                         } else {
                             blockedPanel.removeAll();
                             for (int i = 0; i < blockedCount; i++) {
-                                String friend = ClientInterface.readServer(subIn);
+                                String block = ClientInterface.readServer(subIn);
                                 ClientInterface.writeServer("recieved", subOut);
-                                JLabel blockedLabel = new JLabel(friend);
-                                blockedPanel.add(blockedLabel);
+                                JPanel oneBlock = new JPanel(new BorderLayout());
+                                JLabel friendLabel = new JLabel(block);
+                                JButton removeButton = new JButton("Unblock " + block);
+                                removeButton.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        SubServerInterface.writeClient("11", subOut);
+                                        SubServerInterface.writeClient(block, subOut);
+                                        System.out.println(block);
+                                        SubServerInterface.writeClient("exit", subOut);
+                                        while(frame.getContentPane().getComponentCount() > 1) {
+                                            frame.getContentPane().remove(1);
+                                        }
+                                        ClientInterface.writeServer("1", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.friendCount);
+                                        ClientInterface.writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.blockedCount);
+                                        frame.add(accountScreen);
+                                        frame.revalidate();
+                                        frame.repaint();
+                                    }
+                                });
+                                oneBlock.add(friendLabel, BorderLayout.CENTER);
+                                oneBlock.add(removeButton, BorderLayout.EAST);
+                                oneBlock.setMaximumSize(new Dimension(4500, 20));
+                                blockedPanel.add(oneBlock);
                                 blockedPanel.add(Box.createVerticalStrut(3));
                             }
                             JScrollPane scrollPane = new JScrollPane(blockedPanel);
