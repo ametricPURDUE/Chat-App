@@ -69,10 +69,13 @@ public class ChatClient implements ClientInterface {
         //Initialize all JPanels
         JPanel loginScreen = new JPanel();
         JPanel createScreen = new JPanel();
+        JPanel accountScreen = new JPanel();
         SpringLayout loginLayout = new SpringLayout();
         SpringLayout createScreenLayout = new SpringLayout();
+        SpringLayout accountScreenLayout = new SpringLayout();
         loginScreen.setLayout(loginLayout);
         createScreen.setLayout(createScreenLayout);
+        accountScreen.setLayout(accountScreenLayout);
         //Create all JComponents for login screen
         JTextField usernameInput = new JTextField(15);
         JTextField passwordInput = new JTextField(15);
@@ -337,6 +340,36 @@ public class ChatClient implements ClientInterface {
         changePasswordLayout.putConstraint(SpringLayout.NORTH, newPasswordButton, 20, SpringLayout.NORTH, newPasswordText);
         changePasswordLayout.putConstraint(SpringLayout.WEST, confirmationPasswordLabel, 100, SpringLayout.WEST, changePasswordPanel);
         changePasswordLayout.putConstraint(SpringLayout.NORTH, confirmationPasswordLabel, 40, SpringLayout.NORTH, newPasswordButton);
+
+        // Create JComponents for account screen
+        JLabel accountTitleLabel = new JLabel("Account Details");
+        JLabel usernameLabel = new JLabel("Username:");
+        JLabel nameLabel = new JLabel("Name:");
+        JLabel friendsLabel = new JLabel("Number of Friends:");
+        JLabel blockedLabel = new JLabel("Number of Blocked Users:");
+        JButton backButton = new JButton("Back");
+        
+        // Add components to the account screen
+        accountScreen.add(accountTitleLabel);
+        accountScreen.add(usernameLabel);
+        accountScreen.add(nameLabel);
+        accountScreen.add(friendsLabel);
+        accountScreen.add(blockedLabel);
+        accountScreen.add(backButton);
+        
+        // Set layout constraints
+        accountScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, accountTitleLabel, 0, SpringLayout.HORIZONTAL_CENTER, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, accountTitleLabel, 20, SpringLayout.NORTH, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, usernameLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, usernameLabel, 50, SpringLayout.SOUTH, accountTitleLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, nameLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, nameLabel, 30, SpringLayout.SOUTH, usernameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, friendsLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, friendsLabel, 30, SpringLayout.SOUTH, nameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, blockedLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, blockedLabel, 30, SpringLayout.SOUTH, friendsLabel);
+        accountScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, backButton, 0, SpringLayout.HORIZONTAL_CENTER, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, backButton, 30, SpringLayout.SOUTH, blockedLabel);
 
 
         JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel};
