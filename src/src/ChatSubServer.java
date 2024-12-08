@@ -163,39 +163,39 @@ public class ChatSubServer implements Runnable, SubServerInterface {
 
     public static void findUser(PrintWriter out, BufferedReader in, String username) {
         String search = SubServerInterface.readClient(in);
+        System.out.println(search);
         if (database.getUsers(search) != null) {
             SubServerInterface.writeClient(database.getUsers(search).toString(), out);
-            String searchChoice = SubServerInterface.readClient(in);
+            String searchChoice = "";
             System.out.println(searchChoice);
-            if (searchChoice.equals("1")) {
-                System.out.println("running");
-                database.getUsers(search).addFriend(database.getUsers(username));
-                database.getUsers(username).addFriend(database.getUsers(search));
-            } else if (searchChoice.equals("2")) {
-                database.getUsers(username).blockUser(database.getUsers(search));
-            } else if (searchChoice.equals("3")) {
-                database.getUsers(search).removeFriend(database.getUsers(search));
-                database.getUsers(username).removeFriend(database.getUsers(search));
-            } else if (searchChoice.equals("4")) {
-                database.getUsers(username).unblockUser(database.getUsers(search));
-            } else if (searchChoice.equals("5")) {
-                String filename;
-                if (username.compareTo(search) < 0) {
-                    filename = "chat" + username + search + ".txt";
-                } else {
-                    filename = "chat" + search + username + ".txt";
+            do {
+                searchChoice = SubServerInterface.readClient(in);
+                if (searchChoice.equals("1")) {
+                    System.out.println("running");
+                    database.getUsers(search).addFriend(database.getUsers(username));
+                    database.getUsers(username).addFriend(database.getUsers(search));
+                } else if (searchChoice.equals("2")) {
+                    database.getUsers(username).blockUser(database.getUsers(search));
+                } else if (searchChoice.equals("5")) {
+                    String filename;
+                    if (username.compareTo(search) < 0) {
+                        filename = "chat" + username + search + ".txt";
+                    } else {
+                        filename = "chat" + search + username + ".txt";
+                    }
+                    File file = new File(filename);
+                    if (file.isFile()) {
+                        SubServerInterface.writeClient("exists", out);
+                        System.out.println("exists");
+                    } else {
+                        SubServerInterface.writeClient("not exists", out);
+                        database.writeMessageToFile(username, search, "Hello!");
+//                        database.getUsers(username).newMessage(database.getUsers(search));
+//                        database.getUsers(search).newMessage(database.getUsers(username));
+                        System.out.println("not exists");
+                    }
                 }
-                File file = new File(filename);
-                if (file.isFile()) {
-                    SubServerInterface.writeClient("exists", out);
-                    System.out.println("exists");
-                } else {
-                    SubServerInterface.writeClient("not exists", out);
-                    database.getUsers(username).newMessage(database.getUsers(search));
-                    database.getUsers(search).newMessage(database.getUsers(username));
-                    System.out.println("not exists");
-                }
-            }
+            } while (searchChoice.equals("5"));
         } else {
             System.out.println("bad");
             SubServerInterface.writeClient("User not found", out);
