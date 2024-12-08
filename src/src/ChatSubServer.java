@@ -74,6 +74,18 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                             newAge(out, in);
                             break;
                         case "8":
+                            viewFriends(out, in, username);
+                            break;
+                        case "9":
+                            viewBlocked(out, in, username);
+                            break;
+                        case "10":
+                            removeFriend(out, in, username);
+                            break;
+                        case "11":
+                            removeBlocked(out, in, username);
+                            break;
+                        case "12":
                             newName(out, in);
                             break;
                     }
@@ -88,7 +100,11 @@ public class ChatSubServer implements Runnable, SubServerInterface {
     public boolean portOpen() {
         return !running;
     }
-
+    public static void viewFriendsCount(PrintWriter out, BufferedReader in, String username) {
+        database.readUsernames();
+        ArrayList<User> friends = database.getUsers(username).getFriends();
+        SubServerInterface.writeClient("" + friends.size(), out);
+    }
     public static void viewFriends(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> friends = database.getUsers(username).getFriends();
@@ -101,6 +117,11 @@ public class ChatSubServer implements Runnable, SubServerInterface {
         }
     }
 
+    public static void viewBlockedCount(PrintWriter out, BufferedReader in, String username) {
+        database.readUsernames();
+        ArrayList<User> blocked = database.getUsers(username).getBlocked();
+        SubServerInterface.writeClient("" + blocked.size(), out);
+    }
     public static void viewBlocked(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> blocked = database.getUsers(username).getBlocked();
@@ -113,41 +134,16 @@ public class ChatSubServer implements Runnable, SubServerInterface {
     }
 
     public static void getMessages(PrintWriter out, BufferedReader in, String username) {
-        ArrayList<String> messages = database.getUsers(username).getMessages();
-        ArrayList<String> recipients = new ArrayList<>();
-        SubServerInterface.writeClient("" + messages.size(), out);
-        for (String message : messages) {
-            message = message.substring(4);
-            if (message.indexOf(username) != 0) {
-                message = message.substring(0, message.indexOf(username));
-                recipients.add(message);
-            } else {
-                System.out.println(message);
-                message = message.substring(username.length(), message.length() - 4);
-                System.out.println(message);;
-                recipients.add(message);
-            }
-            SubServerInterface.writeClient(message, out);
-            SubServerInterface.readClient(in);
-        }
+        System.out.println("mesage");
         String choice = SubServerInterface.readClient(in);
-        if (!choice.equals("exit")) {
-            int i = -1;
-            try {
-                i = Integer.parseInt(choice);
-            } catch (NumberFormatException e) {
-                System.out.println("oops#1");
-                SubServerInterface.writeClient("badInfo", out);
-                return;
+        choice = choice.substring(4);
+            if (choice.indexOf(username) == 0) {
+                choice = choice.substring(username.length(), choice.indexOf("."));
+            } else {
+                choice = choice.substring(0, username.length() - 1);
             }
-            if (i < 0 || i >= messages.size()) {
-                System.out.println("oops#2");
-                SubServerInterface.writeClient("badInfo", out);
-                return;
-            }
-            SubServerInterface.writeClient("goodInfo", out);
-            System.out.println("i = " + i);
-            ArrayList<String> message = database.readMessagesFromFile(username, recipients.get(i));
+            System.out.println("CHOIDCE : " + choice);
+            ArrayList<String> message = database.readMessagesFromFile(username, choice);
             SubServerInterface.writeClient("" + message.size(), out);
             for (int j = 0; j < message.size(); j++) {
                 SubServerInterface.writeClient(message.get(j), out);
@@ -157,53 +153,63 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 if (newMessage.equals("exit")) {
                     break;
                 } else {
-                    database.writeMessageToFile(username, recipients.get(i), newMessage);
+                    database.writeMessageToFile(username, choice, newMessage);
                 }
             }
-        }
+
     }
 
     public static void findUser(PrintWriter out, BufferedReader in, String username) {
         String search = SubServerInterface.readClient(in);
+        System.out.println(search);
         if (database.getUsers(search) != null) {
             SubServerInterface.writeClient(database.getUsers(search).toString(), out);
-            String searchChoice = SubServerInterface.readClient(in);
+            String searchChoice = "";
             System.out.println(searchChoice);
-            if (searchChoice.equals("1")) {
-                System.out.println("running");
-                database.getUsers(search).addFriend(database.getUsers(username));
-                database.getUsers(username).addFriend(database.getUsers(search));
-            } else if (searchChoice.equals("2")) {
-                database.getUsers(username).blockUser(database.getUsers(search));
-            } else if (searchChoice.equals("3")) {
-                database.getUsers(search).removeFriend(database.getUsers(search));
-                database.getUsers(username).removeFriend(database.getUsers(search));
-            } else if (searchChoice.equals("4")) {
-                database.getUsers(username).unblockUser(database.getUsers(search));
-            } else if (searchChoice.equals("5")) {
-                String filename;
-                if (username.compareTo(search) < 0) {
-                    filename = "chat" + username + search + ".txt";
-                } else {
-                    filename = "chat" + search + username + ".txt";
+            do {
+                searchChoice = SubServerInterface.readClient(in);
+                if (searchChoice.equals("1")) {
+                    System.out.println("running");
+                    database.getUsers(search).addFriend(database.getUsers(username));
+                    database.getUsers(username).addFriend(database.getUsers(search));
+                } else if (searchChoice.equals("2")) {
+                    database.getUsers(username).blockUser(database.getUsers(search));
+                } else if (searchChoice.equals("5")) {
+                    String filename;
+                    if (username.compareTo(search) < 0) {
+                        filename = "chat" + username + search + ".txt";
+                    } else {
+                        filename = "chat" + search + username + ".txt";
+                    }
+                    File file = new File(filename);
+                    if (file.isFile()) {
+                        SubServerInterface.writeClient("exists", out);
+                        System.out.println("exists");
+                    } else {
+                        SubServerInterface.writeClient("not exists", out);
+                        database.writeMessageToFile(username, search, "Hello!");
+//                        database.getUsers(username).newMessage(database.getUsers(search));
+//                        database.getUsers(search).newMessage(database.getUsers(username));
+                        System.out.println("not exists");
+                    }
                 }
-                File file = new File(filename);
-                if (file.isFile()) {
-                    SubServerInterface.writeClient("exists", out);
-                    System.out.println("exists");
-                } else {
-                    SubServerInterface.writeClient("not exists", out);
-                    database.getUsers(username).newMessage(database.getUsers(search));
-                    database.getUsers(search).newMessage(database.getUsers(username));
-                    System.out.println("not exists");
-                }
-            }
+            } while (searchChoice.equals("5"));
         } else {
             System.out.println("bad");
             SubServerInterface.writeClient("User not found", out);
         }
     }
-
+    public static void removeFriend(PrintWriter out, BufferedReader in, String username) {
+        String search = SubServerInterface.readClient(in);
+        System.out.println("removing " + search);
+        database.getUsers(search).removeFriend(database.getUsers(search));
+        database.getUsers(username).removeFriend(database.getUsers(search));
+    }
+    public static void removeBlocked(PrintWriter out, BufferedReader in, String username) {
+        String search = SubServerInterface.readClient(in);
+        System.out.println("unblocking " + search);
+        database.getUsers(username).unblockUser(database.getUsers(search));
+    }
     public static void createUser(PrintWriter out, BufferedReader in) {
         String newUsername = SubServerInterface.readClient(in);
         ArrayList<String> usernames = database.getUsernames();

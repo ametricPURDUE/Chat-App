@@ -9,6 +9,9 @@ public class ChatClient implements ClientInterface {
     private static Color backgroundColor = Color.LIGHT_GRAY;
     private ChatDatabase database;
     private String username;
+    private String name;
+    private int friendCount;
+    private int blockedCount;
 
     private static void updatePanels(JPanel[] jPanels) {
         for(JPanel panel: jPanels) {
@@ -41,21 +44,6 @@ public class ChatClient implements ClientInterface {
         JButton messagesButton = new JButton("Messages");
         JButton settingsButton = new JButton("Settings");
 
-        messagesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (client.username != null) {
-                    while (frame.getContentPane().getComponentCount() > 1) {
-                        frame.getContentPane().remove(1);
-                    }
-                    ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
-                    messagesScreen.createMessagesScreen(frame, backgroundColor);
-                    frame.revalidate();
-                    frame.repaint();
-                } else {
-                    System.out.println("Error: Username not initialized");
-                }
-            }
-        });
 
         //adds the buttons on top of each other
         sidePanel.add(accountButton);
@@ -69,10 +57,16 @@ public class ChatClient implements ClientInterface {
         //Initialize all JPanels
         JPanel loginScreen = new JPanel();
         JPanel createScreen = new JPanel();
+        JPanel accountScreen = new JPanel();
+        JPanel accountViewScreen = new JPanel();
         SpringLayout loginLayout = new SpringLayout();
         SpringLayout createScreenLayout = new SpringLayout();
+        SpringLayout accountScreenLayout = new SpringLayout();
+        SpringLayout accountViewScreenLayout = new SpringLayout();
         loginScreen.setLayout(loginLayout);
         createScreen.setLayout(createScreenLayout);
+        accountScreen.setLayout(accountScreenLayout);
+        accountViewScreen.setLayout(accountViewScreenLayout);
         //Create all JComponents for login screen
         JTextField usernameInput = new JTextField(15);
         JTextField passwordInput = new JTextField(15);
@@ -365,8 +359,122 @@ public class ChatClient implements ClientInterface {
         changePasswordLayout.putConstraint(SpringLayout.WEST, confirmationPasswordLabel, 100, SpringLayout.WEST, changePasswordPanel);
         changePasswordLayout.putConstraint(SpringLayout.NORTH, confirmationPasswordLabel, 40, SpringLayout.NORTH, newPasswordButton);
 
+        // Create JComponents for account screen
+        JButton searchButton = new JButton("Search");
+        JTextField searchField = new JTextField();
+        JLabel accountTitleLabel = new JLabel("Account Details");
+        JLabel currentUsernameLabel = new JLabel("Username:");
+        JLabel currentNameLabel = new JLabel("Name:");
+        JLabel currentUsername = new JLabel("");
+        JLabel currentName = new JLabel("");
+        JLabel friendsLabel = new JLabel("Number of Friends:");
+        JLabel friends = new JLabel("");
+        JButton viewFriendsButton = new JButton("View Friends");
+        JLabel blockedLabel = new JLabel("Number of Blocked Users:");
+        JLabel blocked = new JLabel("");
+        JButton viewBlockedButton = new JButton("View Blocked");
+        
+        // Add components to the account screen
+        accountScreen.add(searchButton);
+        accountScreen.add(searchField);
+        accountScreen.add(accountTitleLabel);
+        accountScreen.add(currentUsernameLabel);
+        accountScreen.add(currentNameLabel);
+        accountScreen.add(currentUsername);
+        accountScreen.add(currentName);
+        accountScreen.add(friendsLabel);
+        accountScreen.add(friends);
+        accountScreen.add(viewFriendsButton);
+        accountScreen.add(blockedLabel);
+        accountScreen.add(blocked);
+        accountScreen.add(viewBlockedButton);
+        
+        // Set layout constraints
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, searchField, 10, SpringLayout.NORTH, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, searchField, 10, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.EAST, searchField, -200, SpringLayout.EAST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, searchButton, 10, SpringLayout.NORTH, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, searchButton, 10, SpringLayout.EAST, searchField);
+        accountScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, accountTitleLabel, 0, SpringLayout.HORIZONTAL_CENTER, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, accountTitleLabel, 40, SpringLayout.NORTH, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, currentUsernameLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, currentUsernameLabel, 50, SpringLayout.SOUTH, accountTitleLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, currentUsername, 30, SpringLayout.EAST, currentUsernameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, currentUsername, 50, SpringLayout.SOUTH, accountTitleLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, currentNameLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, currentNameLabel, 30, SpringLayout.SOUTH, currentUsernameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, currentName, 0, SpringLayout.WEST, currentUsername);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, currentName, 30, SpringLayout.SOUTH, currentUsernameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, friendsLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, friendsLabel, 30, SpringLayout.SOUTH, currentNameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, friends, 30, SpringLayout.EAST, friendsLabel);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, friends, 30, SpringLayout.SOUTH, currentNameLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, viewFriendsButton, 10, SpringLayout.EAST, friends);
+        accountScreenLayout.putConstraint(SpringLayout.SOUTH, viewFriendsButton, 10, SpringLayout.SOUTH, friends);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, blockedLabel, 150, SpringLayout.WEST, accountScreen);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, blockedLabel, 30, SpringLayout.SOUTH, friendsLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, blocked, 30, SpringLayout.EAST, blockedLabel);
+        accountScreenLayout.putConstraint(SpringLayout.NORTH, blocked, 30, SpringLayout.SOUTH, friendsLabel);
+        accountScreenLayout.putConstraint(SpringLayout.WEST, viewBlockedButton, 10, SpringLayout.EAST, blocked);
+        accountScreenLayout.putConstraint(SpringLayout.SOUTH, viewBlockedButton, 10, SpringLayout.SOUTH, blocked);
 
-        JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel};
+
+
+        JLabel viewAccountTitleLabel = new JLabel("Account Details");
+        JLabel viewCurrentUsernameLabel = new JLabel("Username:");
+        JLabel viewCurrentNameLabel = new JLabel("Name:");
+        JLabel viewCurrentAgeLabel = new JLabel("Age:");
+        JLabel viewCurrentUsername = new JLabel("");
+        JLabel viewCurrentName = new JLabel("");
+        JLabel viewCurrentAge = new JLabel("");
+        JButton addFriend = new JButton("Add Friend");
+        JButton addBlocked = new JButton("Block User");
+        JButton createMessage = new JButton("Send New Message");
+        JLabel message = new JLabel("");
+
+        accountViewScreen.add(viewAccountTitleLabel);
+        accountViewScreen.add(viewCurrentUsernameLabel);
+        accountViewScreen.add(viewCurrentUsername);
+        accountViewScreen.add(viewCurrentNameLabel);
+        accountViewScreen.add(viewCurrentName);
+        accountViewScreen.add(viewCurrentAgeLabel);
+        accountViewScreen.add(viewCurrentAge);
+        accountViewScreen.add(addFriend);
+        accountViewScreen.add(addBlocked);
+        accountViewScreen.add(createMessage);
+        accountViewScreen.add(message);
+
+        accountViewScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, viewAccountTitleLabel, 0, SpringLayout.HORIZONTAL_CENTER, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewAccountTitleLabel, 40, SpringLayout.NORTH, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentUsernameLabel, 150, SpringLayout.WEST, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentUsernameLabel, 50, SpringLayout.SOUTH, viewAccountTitleLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentUsername, 30, SpringLayout.EAST, viewCurrentUsernameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentUsername, 0, SpringLayout.NORTH, viewCurrentUsernameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentNameLabel, 150, SpringLayout.WEST, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentNameLabel, 30, SpringLayout.SOUTH, viewCurrentUsernameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentName, 0, SpringLayout.WEST, viewCurrentUsername);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentName, 30, SpringLayout.SOUTH, viewCurrentUsernameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentAgeLabel, 150, SpringLayout.WEST, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentAgeLabel, 30, SpringLayout.SOUTH, viewCurrentNameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, viewCurrentAge, 0, SpringLayout.WEST, viewCurrentName);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, viewCurrentAge, 30, SpringLayout.SOUTH, viewCurrentNameLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, addFriend, 60, SpringLayout.WEST, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, addFriend, 30, SpringLayout.SOUTH, viewCurrentAgeLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, addBlocked, 20, SpringLayout.EAST, addFriend);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, addBlocked, 30, SpringLayout.SOUTH, viewCurrentAgeLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, createMessage, 20, SpringLayout.EAST, addBlocked);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, createMessage, 30, SpringLayout.SOUTH, viewCurrentAgeLabel);
+        accountViewScreenLayout.putConstraint(SpringLayout.WEST, message, 150, SpringLayout.WEST, accountViewScreen);
+        accountViewScreenLayout.putConstraint(SpringLayout.NORTH, message, 30, SpringLayout.SOUTH, createMessage);
+
+
+        JPanel friendsPanel = new JPanel();
+        friendsPanel.setLayout(new BoxLayout(friendsPanel, BoxLayout.Y_AXIS));
+
+        JPanel blockedPanel = new JPanel();
+        blockedPanel.setLayout(new BoxLayout(blockedPanel, BoxLayout.Y_AXIS));
+
+        JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel, accountScreen};
 
         //buttons for general settings actions
         changeNameButton.addActionListener(new ActionListener() {
@@ -431,6 +539,221 @@ public class ChatClient implements ClientInterface {
                 out.close();
                 PrintWriter subOut = new PrintWriter(subSocket.getOutputStream());
                 BufferedReader subIn = new BufferedReader(new InputStreamReader(subSocket.getInputStream()));
+                addFriend.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        while(frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        ClientInterface.writeServer("1", subOut);
+                        ClientInterface.writeServer("exit", subOut);
+                        ClientInterface.writeServer("1", subOut);
+                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        friends.setText("" + client.friendCount);
+                        frame.add(accountScreen);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
+                addBlocked.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        while(frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        ClientInterface.writeServer("2", subOut);
+                        ClientInterface.writeServer("exit", subOut);
+                        ClientInterface.writeServer("2", subOut);
+                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        blocked.setText("" + client.blockedCount);
+                        frame.add(accountScreen);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
+                createMessage.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        ClientInterface.writeServer("5", subOut);
+                        String s = ClientInterface.readServer(subIn);
+                        if (s.equals("exists")) {
+                            message.setText("you have already messaged this user");
+                        } else {
+                            message.setText("Conversation created");
+                        }
+                    }
+                });
+                accountButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        SubServerInterface.writeClient("exit", subOut);
+                        while(frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        ClientInterface.writeServer("1", subOut);
+                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        friends.setText("" + client.friendCount);
+                        ClientInterface.writeServer("2", subOut);
+                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        blocked.setText("" + client.blockedCount);
+                        frame.add(accountScreen);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
+                searchButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        SubServerInterface.writeClient("exit", subOut);
+                        ClientInterface.writeServer("4", subOut);
+                        ClientInterface.writeServer(searchField.getText(), subOut);
+                        String userInfo = ClientInterface.readServer(subIn);
+                        if (userInfo.equals("not exists") || userInfo.equals("User not found")) {
+                                searchField.setText("User not found");
+                        } else {
+                            while (frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            System.out.println(userInfo);
+                            viewCurrentName.setText(userInfo.substring(0, userInfo.indexOf(",")));
+                            userInfo = userInfo.substring(userInfo.indexOf(",") + 1);
+                            viewCurrentUsername.setText(userInfo.substring(0, userInfo.indexOf(",")));
+                            userInfo = userInfo.substring(userInfo.indexOf(",") + 1);
+                            viewCurrentAge.setText(userInfo);
+                            searchField.setText("");
+                            message.setText("");
+                            frame.add(accountViewScreen);
+                            frame.revalidate();
+                            frame.repaint();
+                        }
+                    }
+                });
+                viewFriendsButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        while(frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        ClientInterface.writeServer("8", subOut);
+                        int friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        if (friendCount < 1) {
+                            friendsPanel.removeAll();
+                            JLabel noFriends = new JLabel("No friends");
+                            friendsPanel.add(noFriends);
+                            JScrollPane scrollPane = new JScrollPane(friendsPanel);
+                            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                            frame.add(scrollPane);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            friendsPanel.removeAll();
+                            for (int i = 0; i < friendCount; i++) {
+                                String friend = ClientInterface.readServer(subIn);
+                                ClientInterface.writeServer("recieved", subOut);
+                                JPanel oneFriend = new JPanel(new BorderLayout());
+                                JLabel friendLabel = new JLabel(friend);
+                                JButton removeButton = new JButton("Remove " + friend);
+                                removeButton.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        SubServerInterface.writeClient("10", subOut);
+                                        SubServerInterface.writeClient(friend, subOut);
+                                        System.out.println(friend);
+                                        SubServerInterface.writeClient("exit", subOut);
+                                        while(frame.getContentPane().getComponentCount() > 1) {
+                                            frame.getContentPane().remove(1);
+                                        }
+                                        ClientInterface.writeServer("1", subOut);
+                                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        friends.setText("" + client.friendCount);
+                                        ClientInterface.writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.blockedCount);
+                                        frame.add(accountScreen);
+                                        frame.revalidate();
+                                        frame.repaint();
+                                    }
+                                });
+                                oneFriend.add(friendLabel, BorderLayout.CENTER);
+                                oneFriend.add(removeButton, BorderLayout.EAST);
+                                oneFriend.setMaximumSize(new Dimension(4500, 20));
+                                friendsPanel.add(oneFriend);
+                                friendsPanel.add(Box.createVerticalStrut(3));
+                            }
+                            JScrollPane scrollPane = new JScrollPane(friendsPanel);
+                            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                            frame.add(scrollPane);
+                            frame.revalidate();
+                            frame.repaint();
+                        }
+                    }
+                });
+                viewBlockedButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        while(frame.getContentPane().getComponentCount() > 1) {
+                            frame.getContentPane().remove(1);
+                        }
+                        ClientInterface.writeServer("9", subOut);
+                        int blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        if (blockedCount < 1) {
+                            blockedPanel.removeAll();
+                            JLabel noBlocked = new JLabel("No Blocked Users");
+                            blockedPanel.add(noBlocked);
+                            JScrollPane scrollPane = new JScrollPane(blockedPanel);
+                            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                            frame.add(scrollPane);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            blockedPanel.removeAll();
+                            for (int i = 0; i < blockedCount; i++) {
+                                String block = ClientInterface.readServer(subIn);
+                                ClientInterface.writeServer("recieved", subOut);
+                                JPanel oneBlock = new JPanel(new BorderLayout());
+                                JLabel friendLabel = new JLabel(block);
+                                JButton removeButton = new JButton("Unblock " + block);
+                                removeButton.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        SubServerInterface.writeClient("11", subOut);
+                                        SubServerInterface.writeClient(block, subOut);
+                                        System.out.println(block);
+                                        SubServerInterface.writeClient("exit", subOut);
+                                        while(frame.getContentPane().getComponentCount() > 1) {
+                                            frame.getContentPane().remove(1);
+                                        }
+                                        ClientInterface.writeServer("1", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.friendCount);
+                                        ClientInterface.writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        blocked.setText("" + client.blockedCount);
+                                        frame.add(accountScreen);
+                                        frame.revalidate();
+                                        frame.repaint();
+                                    }
+                                });
+                                oneBlock.add(friendLabel, BorderLayout.CENTER);
+                                oneBlock.add(removeButton, BorderLayout.EAST);
+                                oneBlock.setMaximumSize(new Dimension(4500, 20));
+                                blockedPanel.add(oneBlock);
+                                blockedPanel.add(Box.createVerticalStrut(3));
+                            }
+                            JScrollPane scrollPane = new JScrollPane(blockedPanel);
+                            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+                            frame.add(scrollPane);
+                            frame.revalidate();
+                            frame.repaint();
+                        }
+                    }
+                });
+                messagesButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (client.username != null) {
+                            while (frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
+                            messagesScreen.createMessagesScreen(frame, backgroundColor, subOut, subIn);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            System.out.println("Error: Username not initialized");
+                        }
+                    }
+                });
                 //action listener for the login button
                 loginButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -442,6 +765,22 @@ public class ChatClient implements ClientInterface {
                         String loginCheck = ClientInterface.readServer(subIn);
                         if (loginCheck.equals("goodInfo")) {
                             client.username = enteredUsername; // Set username
+                            while(frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            currentUsername.setText(client.username);
+                            String name = ClientInterface.readServer(subIn);
+                            client.name = name;
+                            currentName.setText(name);
+                            ClientInterface.writeServer("1", subOut);
+                            client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                            friends.setText("" + client.friendCount);
+                            ClientInterface.writeServer("2", subOut);
+                            client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                            blocked.setText("" + client.blockedCount);
+                            frame.add(accountScreen);
+                            frame.revalidate();
+                            frame.repaint();
                             System.out.println("Login Successful, Welcome " + client.username);
                         } else {
                             System.out.println("Login Failed, please try again");
@@ -500,6 +839,7 @@ public class ChatClient implements ClientInterface {
                             while (frame.getContentPane().getComponentCount() > 1) {
                                 frame.getContentPane().remove(1);
                             }
+                            SubServerInterface.writeClient("exit", subOut);
                             frame.add(settingsPanel);
                             frame.revalidate();
                             frame.repaint();
@@ -511,7 +851,7 @@ public class ChatClient implements ClientInterface {
 
                 changeNameButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("8", subOut);
+                        ClientInterface.writeServer("12", subOut);
                         frame.add(changeNamePanel);
                         frame.remove(settingsPanel);
                         frame.revalidate();
