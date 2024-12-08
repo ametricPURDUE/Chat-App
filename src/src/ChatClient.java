@@ -10,6 +10,14 @@ public class ChatClient implements ClientInterface {
     private ChatDatabase database;
     private String username;
 
+    private static void updatePanels(JPanel[] jPanels) {
+        for(JPanel panel: jPanels) {
+            panel.setBackground(backgroundColor);
+            panel.revalidate();
+            panel.repaint();
+        }
+    }
+
     public static void main(String[] args) {
         int serverPort;
         int serverIndex;
@@ -153,94 +161,183 @@ public class ChatClient implements ClientInterface {
         createScreenLayout.putConstraint(SpringLayout.WEST, createButton, 275, SpringLayout.WEST, createScreen);
         //createScreenLayout.putConstraint(SpringLayout.EAST, createButton, 375, SpringLayout.WEST, createScreen);
         createScreenLayout.putConstraint(SpringLayout.NORTH, createButton, 30, SpringLayout.SOUTH, ageInput);
-//add the content to the settings page
+        //add the content to the settings page
         JLabel changeNameLabel = new JLabel("Change Name:");
         JButton changeNameButton = new JButton("Change Name");
         JLabel changePasswordLabel = new JLabel("Change Password:");
         JButton changePasswordButton = new JButton("Change Password");
         JLabel changeAgeLabel = new JLabel("Change Age:");
         JButton changeAgeButton = new JButton("Change Age");
-
+        
         //sets the background colors
         JLabel setModeLabel = new JLabel("Set Background Mode:");
         JButton lightModeButton = new JButton("Light");
-        lightModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                backgroundColor = Color.WHITE;
-                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
-
-            }
-        });
         JButton darkModeButton = new JButton("Dark");
-        darkModeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                backgroundColor = new Color(50, 50, 50);
+        JButton defaultModeButton = new JButton("Default");
 
-                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
+        //create all panels for settings
+        JPanel settingsPanel = new JPanel();
+        JPanel changeNamePanel = new JPanel();
+        JPanel changeAgePanel = new JPanel();
+        JPanel changePasswordPanel = new JPanel();
+
+        //create all layouts for settings
+        SpringLayout settingsLayout = new SpringLayout();
+        SpringLayout changeNameLayout = new SpringLayout();
+        SpringLayout changeAgeLayout = new SpringLayout();
+        SpringLayout changePasswordLayout = new SpringLayout();
+
+        //set layouts to respective panels for settings
+        settingsPanel.setLayout(settingsLayout);
+        changeNamePanel.setLayout(changeNameLayout);
+        changeAgePanel.setLayout(changeAgeLayout);
+        changePasswordPanel.setLayout(changePasswordLayout);
+
+        //create change name JComponents
+        JLabel confirmNameChangeLabel = new JLabel("Change Name");
+        JTextField changeNameText = new JTextField();
+        JButton confirmNameChangeButton = new JButton("Confirm");
+
+        //create change age JComponents
+        JLabel confirmAgeChangeLabel = new JLabel("Change Age");
+        JTextField changeAgeText = new JTextField();
+        JButton confirmAgeChangeButton = new JButton("Confirm");
+
+        //create change password JComponents
+        JLabel confirmPasswordChangeLabel = new JLabel("Change Password");
+        JTextField changePasswordText = new JTextField();
+        JButton confirmPasswordChangeButton = new JButton("Confirm");
+
+        //general back button for each screen
+        JButton settingsBackButton = new JButton("Back");
+
+        //in brackets so I can collapse them - AJ (I'll remove them before we have to submit)
+        {
+            //set the general settings items to settings panel
+            settingsPanel.add(changeNameLabel);
+            settingsPanel.add(changeNameButton);
+            settingsPanel.add(changeAgeLabel);
+            settingsPanel.add(changeAgeButton);
+            settingsPanel.add(changePasswordLabel);
+            settingsPanel.add(changePasswordButton);
+            settingsPanel.add(setModeLabel);
+            settingsPanel.add(lightModeButton);
+            settingsPanel.add(darkModeButton);
+            settingsPanel.add(defaultModeButton);
+            settingsPanel.setBackground(backgroundColor);
+
+            //set the change name items to changeName panel
+            changeNamePanel.add(confirmNameChangeLabel);
+            changeNamePanel.add(changeNameText);
+            changeNamePanel.add(confirmNameChangeButton);
+            changeNamePanel.add(settingsBackButton);
+            changeNamePanel.setBackground(backgroundColor);
+
+            //set the change age items to changeAgePanel
+            changeAgePanel.add(confirmAgeChangeLabel);
+            changeAgePanel.add(changeAgeText);
+            changeAgePanel.add(confirmAgeChangeButton);
+            changeAgePanel.setBackground(backgroundColor);
+            changeAgePanel.add(settingsBackButton);
+
+            //set the change password items to changePasswordPanel
+            changePasswordPanel.add(confirmPasswordChangeLabel);
+            changePasswordPanel.add(changePasswordText);
+            changePasswordPanel.add(confirmPasswordChangeButton);
+            changePasswordPanel.add(settingsBackButton);
+            changePasswordPanel.setBackground(backgroundColor);
+        }
+
+        {
+            //set the constraints for the name change label
+            settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100, SpringLayout.WEST, settingsPanel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changeNameLabel, 70, SpringLayout.NORTH, settingsPanel);
+
+            //set the constraints for the name change button
+            settingsLayout.putConstraint(SpringLayout.WEST, changeNameButton, 120, SpringLayout.WEST, changeNameLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changeNameButton, 65, SpringLayout.NORTH, settingsPanel);
+
+            //set the constraints for the age change label
+            settingsLayout.putConstraint(SpringLayout.WEST, changeAgeLabel, 100, SpringLayout.WEST, settingsPanel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeLabel, 50, SpringLayout.NORTH, changeNameLabel);
+
+            //set the constraints for the age change button
+            settingsLayout.putConstraint(SpringLayout.WEST, changeAgeButton, 120, SpringLayout.WEST, changeAgeLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeButton, 50, SpringLayout.NORTH, changeNameLabel);
+
+            //set the constraints for the password change label
+            settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100, SpringLayout.WEST, settingsPanel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50, SpringLayout.NORTH, changeAgeLabel);
+
+            //set the constraints for the password change button
+            settingsLayout.putConstraint(SpringLayout.WEST, changePasswordButton, 120, SpringLayout.WEST, changeAgeLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50, SpringLayout.NORTH, changeAgeButton);
+
+            //set the constraints for the color mode label
+            settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100, SpringLayout.WEST, settingsPanel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50, SpringLayout.NORTH, changePasswordLabel);
+
+            //set the constraints for the light mode button
+            settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140, SpringLayout.WEST, setModeLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50, SpringLayout.NORTH, changePasswordButton);
+
+            //set the constraints for the dark mode button
+            settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140, SpringLayout.WEST, setModeLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30, SpringLayout.NORTH, lightModeButton);
+
+            //set the constraints for the default mode button
+            settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140, SpringLayout.WEST, setModeLabel);
+            settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30, SpringLayout.NORTH, darkModeButton);
+        }
+
+        JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel};
+
+        //buttons for general settings actions
+        changeNameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.add(changeNamePanel);
+                frame.remove(settingsPanel);
+                frame.revalidate();
+                frame.repaint();
             }
         });
-        JButton defaultModeButton = new JButton("Default");
+        changePasswordButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.add(changePasswordPanel);
+                frame.remove(settingsPanel);
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+        changeAgeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.add(changeAgePanel);
+                frame.remove(settingsPanel);
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
         defaultModeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 backgroundColor = Color.LIGHT_GRAY;
                 frame.getContentPane().getComponent(1).setBackground(backgroundColor);
+                updatePanels(jPanels);
             }
         });
-
-        JPanel settingsPanel = new JPanel();
-        SpringLayout settingsLayout = new SpringLayout();
-        settingsPanel.setLayout(settingsLayout);
-        settingsPanel.add(changeNameLabel);
-        settingsPanel.add(changeNameButton);
-        settingsPanel.add(changeAgeLabel);
-        settingsPanel.add(changeAgeButton);
-        settingsPanel.add(changePasswordLabel);
-        settingsPanel.add(changePasswordButton);
-        settingsPanel.add(setModeLabel);
-        settingsPanel.add(lightModeButton);
-        settingsPanel.add(darkModeButton);
-        settingsPanel.add(defaultModeButton);
-        //frame.add(settingsPanel, BorderLayout.CENTER);
-
-        //set the constraints for the name change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changeNameLabel, 100, SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameLabel, 70, SpringLayout.NORTH, settingsPanel);
-
-        //set the constraints for the name change button
-        settingsLayout.putConstraint(SpringLayout.WEST, changeNameButton, 120, SpringLayout.WEST, changeNameLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeNameButton, 65, SpringLayout.NORTH, settingsPanel);
-
-        //set the constraints for the age change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changeAgeLabel, 100, SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeLabel, 50, SpringLayout.NORTH, changeNameLabel);
-
-        //set the constraints for the age change button
-        settingsLayout.putConstraint(SpringLayout.WEST, changeAgeButton, 120, SpringLayout.WEST, changeAgeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changeAgeButton, 50, SpringLayout.NORTH, changeNameLabel);
-
-        //set the constraints for the password change label
-        settingsLayout.putConstraint(SpringLayout.WEST, changePasswordLabel, 100, SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordLabel, 50, SpringLayout.NORTH, changeAgeLabel);
-
-        //set the constraints for the password change button
-        settingsLayout.putConstraint(SpringLayout.WEST,changePasswordButton, 120, SpringLayout.WEST, changeAgeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, changePasswordButton, 50, SpringLayout.NORTH, changeAgeButton);
-
-        //set the constraints for the color mode label
-        settingsLayout.putConstraint(SpringLayout.WEST, setModeLabel, 100, SpringLayout.WEST, settingsPanel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, setModeLabel, 50, SpringLayout.NORTH, changePasswordLabel);
-
-        //set the constraints for the light mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, lightModeButton, 140, SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, lightModeButton, 50, SpringLayout.NORTH, changePasswordButton);
-
-        //set the constraints for the dark mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, darkModeButton, 140, SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, darkModeButton, 30, SpringLayout.NORTH, lightModeButton);
-
-        //set the constraints for the default mode button
-        settingsLayout.putConstraint(SpringLayout.WEST, defaultModeButton, 140, SpringLayout.WEST, setModeLabel);
-        settingsLayout.putConstraint(SpringLayout.NORTH, defaultModeButton, 30, SpringLayout.NORTH, darkModeButton);
+        darkModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundColor = new Color(100, 100, 100);
+                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
+                updatePanels(jPanels);
+            }
+        });
+        lightModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundColor = Color.WHITE;
+                frame.getContentPane().getComponent(1).setBackground(backgroundColor);
+                updatePanels(jPanels);
+            }
+        });
 
         try {
             Socket mainSocket = new Socket("localhost", 4242); // Connects to main server
@@ -284,6 +381,21 @@ public class ChatClient implements ClientInterface {
                     }
                 });
 
+                settingsBackButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (client.username != null) {
+                            while (frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            frame.add(settingsPanel);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            System.out.println("Username not initialized");
+                        }
+                    }
+                });
+
                 settingsButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         if (client.username != null) {
@@ -298,6 +410,7 @@ public class ChatClient implements ClientInterface {
                         }
                     }
                 });
+
                 newUserButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         ClientInterface.writeServer("Create", subOut);
@@ -307,6 +420,7 @@ public class ChatClient implements ClientInterface {
                         frame.repaint();
                     }
                 });
+
                 createButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         ClientInterface.writeServer(createUsername.getText(),subOut);
