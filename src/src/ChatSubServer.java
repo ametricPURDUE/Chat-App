@@ -41,6 +41,8 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                         System.out.println(goodInfo);
                         if (goodInfo) {
                             SubServerInterface.writeClient("goodInfo", out);
+                            String name = database.getUsers(username).getName();
+                            SubServerInterface.writeClient(name, out);
                             loginCorrect = true;
                         } else {
                             SubServerInterface.writeClient("badInfo", out);
@@ -49,16 +51,16 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 }
                 while (loggedIn) {
                     String choice = SubServerInterface.readClient(in);
-                    System.out.println(choice);
+                    System.out.println("switch choice: " + choice);
                     if (choice.equals("exit")){
                         choice = SubServerInterface.readClient(in);
                     }
                     switch (choice) {
                         case "1" : //sends all friends to client to display
-                            viewFriends(out, in, username);
+                            viewFriendsCount(out, in, username);
                             break;
                         case "2" : //sends all blocked users to client to display
-                            viewBlocked(out, in, username);
+                            viewBlockedCount(out, in, username);
                             break;
                         case "3":
                             getMessages(out, in, username);
@@ -76,6 +78,12 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                         case "7":
                             newAge(out, in);
                             break;
+                        case "8":
+                            viewFriends(out, in, username);
+                            break;
+                        case "9":
+                            viewBlocked(out, in, username);
+                            break;
                     }
                 }
 
@@ -88,7 +96,11 @@ public class ChatSubServer implements Runnable, SubServerInterface {
     public boolean portOpen() {
         return !running;
     }
-
+    public static void viewFriendsCount(PrintWriter out, BufferedReader in, String username) {
+        database.readUsernames();
+        ArrayList<User> friends = database.getUsers(username).getFriends();
+        SubServerInterface.writeClient("" + friends.size(), out);
+    }
     public static void viewFriends(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> friends = database.getUsers(username).getFriends();
@@ -101,6 +113,11 @@ public class ChatSubServer implements Runnable, SubServerInterface {
         }
     }
 
+    public static void viewBlockedCount(PrintWriter out, BufferedReader in, String username) {
+        database.readUsernames();
+        ArrayList<User> blocked = database.getUsers(username).getBlocked();
+        SubServerInterface.writeClient("" + blocked.size(), out);
+    }
     public static void viewBlocked(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> blocked = database.getUsers(username).getBlocked();
