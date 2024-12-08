@@ -544,10 +544,10 @@ public class ChatClient implements ClientInterface {
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
-                        ClientInterface.writeServer("1", subOut);
-                        ClientInterface.writeServer("exit", subOut);
-                        ClientInterface.writeServer("1", subOut);
-                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("1", subOut);
+                        writeServer("exit", subOut);
+                        writeServer("1", subOut);
+                        client.friendCount = Integer.parseInt(readServer(subIn));
                         friends.setText("" + client.friendCount);
                         frame.add(accountScreen);
                         frame.revalidate();
@@ -559,10 +559,10 @@ public class ChatClient implements ClientInterface {
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
-                        ClientInterface.writeServer("2", subOut);
-                        ClientInterface.writeServer("exit", subOut);
-                        ClientInterface.writeServer("2", subOut);
-                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("2", subOut);
+                        writeServer("exit", subOut);
+                        writeServer("2", subOut);
+                        client.blockedCount = Integer.parseInt(readServer(subIn));
                         blocked.setText("" + client.blockedCount);
                         frame.add(accountScreen);
                         frame.revalidate();
@@ -571,8 +571,8 @@ public class ChatClient implements ClientInterface {
                 });
                 createMessage.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("5", subOut);
-                        String s = ClientInterface.readServer(subIn);
+                        writeServer("5", subOut);
+                        String s = readServer(subIn);
                         if (s.equals("exists")) {
                             message.setText("you have already messaged this user");
                         } else {
@@ -586,11 +586,11 @@ public class ChatClient implements ClientInterface {
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
-                        ClientInterface.writeServer("1", subOut);
-                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("1", subOut);
+                        client.friendCount = Integer.parseInt(readServer(subIn));
                         friends.setText("" + client.friendCount);
-                        ClientInterface.writeServer("2", subOut);
-                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("2", subOut);
+                        client.blockedCount = Integer.parseInt(readServer(subIn));
                         blocked.setText("" + client.blockedCount);
                         frame.add(accountScreen);
                         frame.revalidate();
@@ -600,9 +600,9 @@ public class ChatClient implements ClientInterface {
                 searchButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         SubServerInterface.writeClient("exit", subOut);
-                        ClientInterface.writeServer("4", subOut);
-                        ClientInterface.writeServer(searchField.getText(), subOut);
-                        String userInfo = ClientInterface.readServer(subIn);
+                        writeServer("4", subOut);
+                        writeServer(searchField.getText(), subOut);
+                        String userInfo = readServer(subIn);
                         if (userInfo.equals("not exists") || userInfo.equals("User not found")) {
                                 searchField.setText("User not found");
                         } else {
@@ -628,8 +628,8 @@ public class ChatClient implements ClientInterface {
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
-                        ClientInterface.writeServer("8", subOut);
-                        int friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("8", subOut);
+                        int friendCount = Integer.parseInt(readServer(subIn));
                         if (friendCount < 1) {
                             friendsPanel.removeAll();
                             JLabel noFriends = new JLabel("No friends");
@@ -642,8 +642,8 @@ public class ChatClient implements ClientInterface {
                         } else {
                             friendsPanel.removeAll();
                             for (int i = 0; i < friendCount; i++) {
-                                String friend = ClientInterface.readServer(subIn);
-                                ClientInterface.writeServer("recieved", subOut);
+                                String friend = readServer(subIn);
+                                writeServer("recieved", subOut);
                                 JPanel oneFriend = new JPanel(new BorderLayout());
                                 JLabel friendLabel = new JLabel(friend);
                                 JButton removeButton = new JButton("Remove " + friend);
@@ -656,11 +656,11 @@ public class ChatClient implements ClientInterface {
                                         while(frame.getContentPane().getComponentCount() > 1) {
                                             frame.getContentPane().remove(1);
                                         }
-                                        ClientInterface.writeServer("1", subOut);
-                                        client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        writeServer("1", subOut);
+                                        client.friendCount = Integer.parseInt(readServer(subIn));
                                         friends.setText("" + client.friendCount);
-                                        ClientInterface.writeServer("2", subOut);
-                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(readServer(subIn));
                                         blocked.setText("" + client.blockedCount);
                                         frame.add(accountScreen);
                                         frame.revalidate();
@@ -686,8 +686,8 @@ public class ChatClient implements ClientInterface {
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
-                        ClientInterface.writeServer("9", subOut);
-                        int blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                        writeServer("9", subOut);
+                        int blockedCount = Integer.parseInt(readServer(subIn));
                         if (blockedCount < 1) {
                             blockedPanel.removeAll();
                             JLabel noBlocked = new JLabel("No Blocked Users");
@@ -700,8 +700,8 @@ public class ChatClient implements ClientInterface {
                         } else {
                             blockedPanel.removeAll();
                             for (int i = 0; i < blockedCount; i++) {
-                                String block = ClientInterface.readServer(subIn);
-                                ClientInterface.writeServer("recieved", subOut);
+                                String block = readServer(subIn);
+                                writeServer("recieved", subOut);
                                 JPanel oneBlock = new JPanel(new BorderLayout());
                                 JLabel friendLabel = new JLabel(block);
                                 JButton removeButton = new JButton("Unblock " + block);
@@ -714,11 +714,11 @@ public class ChatClient implements ClientInterface {
                                         while(frame.getContentPane().getComponentCount() > 1) {
                                             frame.getContentPane().remove(1);
                                         }
-                                        ClientInterface.writeServer("1", subOut);
-                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        writeServer("1", subOut);
+                                        client.blockedCount = Integer.parseInt(readServer(subIn));
                                         blocked.setText("" + client.friendCount);
-                                        ClientInterface.writeServer("2", subOut);
-                                        client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                                        writeServer("2", subOut);
+                                        client.blockedCount = Integer.parseInt(readServer(subIn));
                                         blocked.setText("" + client.blockedCount);
                                         frame.add(accountScreen);
                                         frame.revalidate();
@@ -759,25 +759,28 @@ public class ChatClient implements ClientInterface {
                     public void actionPerformed(ActionEvent e) {
                         String enteredUsername = usernameInput.getText();
                         String password = passwordInput.getText();
-                        ClientInterface.writeServer("login", subOut);
-                        ClientInterface.writeServer(enteredUsername, subOut);
-                        ClientInterface.writeServer(password, subOut);
-                        String loginCheck = ClientInterface.readServer(subIn);
+                        writeServer("login", subOut);
+                        writeServer(enteredUsername, subOut);
+                        writeServer(password, subOut);
+                        String loginCheck = readServer(subIn);
+                        System.out.println(loginCheck);
                         if (loginCheck.equals("goodInfo")) {
                             client.username = enteredUsername; // Set username
                             while(frame.getContentPane().getComponentCount() > 1) {
                                 frame.getContentPane().remove(1);
                             }
                             currentUsername.setText(client.username);
-                            String name = ClientInterface.readServer(subIn);
+                            String name = readServer(subIn);
                             client.name = name;
                             currentName.setText(name);
-                            ClientInterface.writeServer("1", subOut);
-                            client.friendCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                            writeServer("1", subOut);
+                            client.friendCount = Integer.parseInt(readServer(subIn));
                             friends.setText("" + client.friendCount);
-                            ClientInterface.writeServer("2", subOut);
-                            client.blockedCount = Integer.parseInt(ClientInterface.readServer(subIn));
+                            System.out.println(friends);
+                            writeServer("2", subOut);
+                            client.blockedCount = Integer.parseInt(readServer(subIn));
                             blocked.setText("" + client.blockedCount);
+                            System.out.println(blocked);
                             frame.add(accountScreen);
                             frame.revalidate();
                             frame.repaint();
@@ -851,7 +854,7 @@ public class ChatClient implements ClientInterface {
 
                 changeNameButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("12", subOut);
+                        writeServer("12", subOut);
                         frame.add(changeNamePanel);
                         frame.remove(settingsPanel);
                         frame.revalidate();
@@ -861,8 +864,8 @@ public class ChatClient implements ClientInterface {
 
                 newNameButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer(nameUsernameText.getText() + "," + newNameText.getText(), subOut);
-                        boolean successful = Boolean.parseBoolean(ClientInterface.readServer(subIn));
+                        writeServer(nameUsernameText.getText() + "," + newNameText.getText(), subOut);
+                        boolean successful = Boolean.parseBoolean(readServer(subIn));
                         if (successful) {
                             confirmationNameLabel.setText("Changed Name Successfully");
                         } else {
@@ -873,7 +876,7 @@ public class ChatClient implements ClientInterface {
 
                 changeAgeButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("7", subOut);
+                        writeServer("7", subOut);
                         frame.add(changeAgePanel);
                         frame.remove(settingsPanel);
                         frame.revalidate();
@@ -889,8 +892,8 @@ public class ChatClient implements ClientInterface {
                                 confirmationAgeLabel.setText("Please enter a positive number");
                                 return;
                             }
-                            ClientInterface.writeServer(ageUsernameText.getText() + "," + String.valueOf(age), subOut);
-                            boolean successful = Boolean.parseBoolean(ClientInterface.readServer(subIn));
+                            writeServer(ageUsernameText.getText() + "," + String.valueOf(age), subOut);
+                            boolean successful = Boolean.parseBoolean(readServer(subIn));
                             if (successful) {
                                 confirmationAgeLabel.setText("Age Successfully Changed");
                             }
@@ -902,7 +905,7 @@ public class ChatClient implements ClientInterface {
 
                 changePasswordButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("6", subOut);
+                        writeServer("6", subOut);
                         frame.add(changePasswordPanel);
                         frame.remove(settingsPanel);
                         frame.revalidate();
@@ -914,10 +917,10 @@ public class ChatClient implements ClientInterface {
                     public void actionPerformed(ActionEvent e) {
                         if (!passUsernameText.getText().isEmpty() && !newPasswordText.getText().isEmpty()) {
                             String toSend = String.format("%s,%s", passUsernameText.getText(), newPasswordText.getText());
-                            ClientInterface.writeServer(toSend, subOut);
-                            String valid = ClientInterface.readServer(subIn);
+                            writeServer(toSend, subOut);
+                            String valid = readServer(subIn);
                             System.out.println(valid);
-                            boolean successful = Boolean.parseBoolean(ClientInterface.readServer(subIn));
+                            boolean successful = Boolean.parseBoolean(readServer(subIn));
                             System.out.println(successful);
                         } else {
                             confirmationPasswordLabel.setText("Please fill out all the text fields");
@@ -928,7 +931,7 @@ public class ChatClient implements ClientInterface {
 
                 newUserButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer("Create", subOut);
+                        writeServer("Create", subOut);
                         frame.add(createScreen);
                         frame.remove(loginScreen);
                         frame.revalidate();
@@ -938,17 +941,17 @@ public class ChatClient implements ClientInterface {
 
                 createButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ClientInterface.writeServer(createUsername.getText(),subOut);
-                        String good = ClientInterface.readServer(subIn);
+                        writeServer(createUsername.getText(),subOut);
+                        String good = readServer(subIn);
                         if (good.equals("GoodUsername")) {
-                            ClientInterface.writeServer(createPassword.getText(), subOut);
-                            String goodPassword = ClientInterface.readServer(subIn);
+                            writeServer(createPassword.getText(), subOut);
+                            String goodPassword = readServer(subIn);
                             if (goodPassword.equals("Good Password")) {
-                                ClientInterface.writeServer(nameInput.getText(), subOut);
-                                String goodName = ClientInterface.readServer(subIn);
+                                writeServer(nameInput.getText(), subOut);
+                                String goodName = readServer(subIn);
                                 if (goodName.equals("GoodName")) {
-                                    ClientInterface.writeServer(ageInput.getText(), subOut);
-                                    String result = ClientInterface.readServer(subIn);
+                                    writeServer(ageInput.getText(), subOut);
+                                    String result = readServer(subIn);
                                     System.out.println(result);
                                     resultLabel.setText(result);
                                     frame.add(loginScreen);
@@ -986,173 +989,30 @@ public class ChatClient implements ClientInterface {
             e.printStackTrace();
         }
     }
-
+    /**
+     * A method to read the message the server sends
+     *
+     * @param in the reader to use
+     * @return returns the received message from the server
+     */
+    public static String readServer(BufferedReader in) {
+        try {
+            String s = in.readLine();
+            return s;
+        } catch (IOException e) {
+            return "Socket is not connected";
+        }
+    }
+    /**
+     * A method that sends the inputted message to the server
+     *
+     * @param msg the message to be sent
+     * @param out the print writer that will be used
+     * @return return true if sent successfully and false otherwise
+     */
+    public static void writeServer(String msg, PrintWriter out) {
+        out.write(msg);
+        out.println();
+        out.flush();
+    }
 }
-//                System.out.println("Server Port : " + serverPort);
-//                System.out.println("Server Index : " + serverIndex);
-//                System.out.println("Welcome!");
-//                Scanner scan = new Scanner(System.in);
-//                boolean continueLogin = true;
-//                boolean goodInfo = false;
-//                String username = "";
-//                boolean loggedIn = false;
-//                frame.setVisible(true);
-//                while (continueLogin) {
-//                    System.out.println("Please enter username to proceed, enter exit to exit, or enter Create to create new user");
-//                    username = scan.nextLine();
-//                    if (username.equals("exit")) {
-//                        continueLogin = false;
-//                        ClientInterface.writeServer(username, subOut);
-//                    } else if (username.equals("Create")) {
-//                        ClientInterface.writeServer(username, subOut);
-//                        System.out.println("Please enter username");
-//                        String newUsername = scan.nextLine();
-//                        ClientInterface.writeServer(newUsername, subOut);
-//                        String good = ClientInterface.readServer(subIn);
-//                        if (good.equals("GoodUsername")) {
-//                            System.out.println("Please enter password");
-//                            String newPassword = scan.nextLine();
-//                            ClientInterface.writeServer(newPassword, subOut);
-//                            String goodPassword = ClientInterface.readServer(subIn);
-//                            if (goodPassword.equals("Good Password")) {
-//                                System.out.println("Please enter your name");
-//                                String newName = scan.nextLine();
-//                                ClientInterface.writeServer(newName, subOut);
-//                                String goodName = ClientInterface.readServer(subIn);
-//                                if (goodName.equals("GoodName")) {
-//                                    System.out.println("Please enter your age");
-//                                    String newAge = scan.nextLine();
-//                                    ClientInterface.writeServer(newAge, subOut);
-//                                    String result = ClientInterface.readServer(subIn);
-//                                    System.out.println(result);
-//                                }
-//                            } else {
-//                                System.out.println(goodPassword);
-//                            }
-//                        } else if (good.equals("Username cannot contain commas")) {
-//                            System.out.println(good);
-//                        } else {
-//                            System.out.println("Username already exists");
-//                        }
-//                    } else {
-//                        ClientInterface.writeServer(username, subOut);
-//                        System.out.println("Please enter password");
-//                        ClientInterface.writeServer(scan.nextLine(), subOut);
-//                        String loginCheck = ClientInterface.readServer(subIn);
-//                        if (loginCheck.equals("goodInfo")) {
-//                            System.out.println("Login Successful, Welcome " + username);
-//                            continueLogin = false;
-//                            loggedIn = true;
-//                        } else {
-//                            System.out.println("Login Failed, please try again");
-//                        }
-//                        // Users own profile will be displayed here
-//                        while (loggedIn) {
-//                            System.out.println("press 1 to view friends, 2 to view blocked, 3 to view messages, 4 to search for users and 5 to logout");
-//                            String choice = scan.nextLine();
-//                            ClientInterface.writeServer(choice, subOut);
-//                            if (choice.equals("1")) {
-//                                viewFriends(subOut, subIn);
-//                            } else if (choice.equals("2")) {
-//                                viewBlocked(subOut, subIn);
-//                            } else if (choice.equals("3")) {
-//                                viewMessage(subOut, subIn);
-//                            } else if (choice.equals("4")) {
-//                                viewUser(subOut, subIn);
-//                            } else if (choice.equals("5")) {
-//                                System.out.println("Goodbye " + username);
-//                                loggedIn = false;
-//                                continueLogin = true;
-//                            } else {
-//                                System.out.println("Invalid choice");
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//    public static void viewFriends(PrintWriter out, BufferedReader in) {
-//        int friendCount = Integer.parseInt(ClientInterface.readServer(in));
-//        if (friendCount < 1) {
-//            System.out.println("No friends");
-//        } else {
-//            System.out.println("Friends:");
-//            for (int i = 0; i < friendCount; i++) {
-//                String friend = ClientInterface.readServer(in);
-//                ClientInterface.writeServer("recieved", out);
-//                System.out.println(friend);
-//            }
-//        }
-//    }
-//    public static void viewBlocked(PrintWriter out, BufferedReader in) {
-//        int blockedCount = Integer.parseInt(ClientInterface.readServer(in));
-//        if (blockedCount < 1) {
-//            System.out.println("No blocked users");
-//        } else {
-//            System.out.println("Blocked:");
-//            for (int i = 0; i < blockedCount; i++) {
-//                String blocked = ClientInterface.readServer(in);
-//                ClientInterface.writeServer("recieved", out);
-//                System.out.println(blocked);
-//            }
-//        }
-//    }
-//    public static void viewMessage(PrintWriter out, BufferedReader in) {
-//        int messageCount = Integer.parseInt(ClientInterface.readServer(in));
-//        System.out.println("Message count: " + messageCount);
-//        if (messageCount < 1) {
-//            System.out.println("No messages");
-//        } else {
-//            System.out.println("Messages:");
-//            for (int i = 0; i < messageCount; i++) {
-//                String message = ClientInterface.readServer(in);
-//                ClientInterface.writeServer("recieved", out);
-//                System.out.println(message);
-//            }
-//        }
-//        System.out.println("Type the number of the message you would like to access or type exit to exit");
-//        Scanner scan = new Scanner(System.in);
-//        String choice = scan.nextLine();
-//        ClientInterface.writeServer(choice, out);
-//        String result = ClientInterface.readServer(in);
-//        if (result.equals("goodInfo")) {
-//            System.out.println("enter exit to exit");
-//            int size = Integer.parseInt(ClientInterface.readServer(in));
-//            for (int i = 0; i < size; i++) {
-//                System.out.println(ClientInterface.readServer(in));
-//            }
-//            while (true) {
-//                String s = scan.nextLine();
-//                ClientInterface.writeServer(s, out);
-//                if (s.equals("exit")) {
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//    public static void viewUser(PrintWriter out, BufferedReader in) {
-//        System.out.println("Please enter username");
-//        Scanner scan = new Scanner(System.in);
-//        String search = scan.nextLine();
-//        ClientInterface.writeServer(search, out);
-//        String found = ClientInterface.readServer(in);
-//        System.out.println(found);
-//        if (!found.equals("User not found")) {
-//            System.out.println("1 to friend, 2 to block, 3 to remove friend, 4 to unblock, 5 to add new message (you can only message friends)");
-//            String searchChoice = scan.nextLine();
-//            ClientInterface.writeServer(searchChoice, out);
-//            if (searchChoice.equals("5")) {
-//                String exists = ClientInterface.readServer(in);
-//                System.out.println(exists);
-//                if (exists.equals("not exists")) {
-//                    System.out.println("Conversation Created");
-//                } else {
-//                    System.out.println("You have already messaged this user");
-//                }
-//            }
-//        }
-//    }
-//}

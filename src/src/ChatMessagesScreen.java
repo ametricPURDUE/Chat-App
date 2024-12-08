@@ -120,10 +120,10 @@ public class ChatMessagesScreen {
         out.flush();
         out.println(conversation);
         out.flush();
-        int size = Integer.parseInt(ClientInterface.readServer(in));
+        int size = Integer.parseInt(readServer(in));
         System.out.println(size);
         for (int i = 0; i < size; i++) {
-            messages.add(ClientInterface.readServer(in));
+            messages.add(readServer(in));
             conversationPanel.add(new JLabel(messages.get(i)));
             conversationPanel.add(Box.createVerticalStrut(3));
         }
@@ -142,7 +142,8 @@ public class ChatMessagesScreen {
         send.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String message = messageField.getText();
-                ClientInterface.writeServer(message, out);
+                out.println(message);
+                out.flush();
                 messageField.setText("");
                 if (!message.equals("exit")){
                     conversationPanel.add(new JLabel(username + ": " + message));
@@ -173,5 +174,19 @@ public class ChatMessagesScreen {
             strippedName = strippedName.substring(0, 1).toUpperCase() + strippedName.substring(1);
         }
         return strippedName.trim();
+    }
+    /**
+     * A method to read the message the server sends
+     *
+     * @param in the reader to use
+     * @return returns the received message from the server
+     */
+    public static String readServer(BufferedReader in) {
+        try {
+            String s = in.readLine();
+            return s;
+        } catch (IOException e) {
+            return "Socket is not connected";
+        }
     }
 }
