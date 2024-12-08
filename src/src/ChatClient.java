@@ -582,7 +582,7 @@ public class ChatClient implements ClientInterface {
                 });
                 accountButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        SubServerInterface.writeClient("exit", subOut);
+                        writeServer("exit", subOut);
                         while(frame.getContentPane().getComponentCount() > 1) {
                             frame.getContentPane().remove(1);
                         }
@@ -599,7 +599,7 @@ public class ChatClient implements ClientInterface {
                 });
                 searchButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        SubServerInterface.writeClient("exit", subOut);
+                        writeServer("exit", subOut);
                         writeServer("4", subOut);
                         writeServer(searchField.getText(), subOut);
                         String userInfo = readServer(subIn);
@@ -649,10 +649,10 @@ public class ChatClient implements ClientInterface {
                                 JButton removeButton = new JButton("Remove " + friend);
                                 removeButton.addActionListener(new ActionListener() {
                                     public void actionPerformed(ActionEvent e) {
-                                        SubServerInterface.writeClient("10", subOut);
-                                        SubServerInterface.writeClient(friend, subOut);
+                                        writeServer("10", subOut);
+                                        writeServer(friend, subOut);
                                         System.out.println(friend);
-                                        SubServerInterface.writeClient("exit", subOut);
+                                        writeServer("exit", subOut);
                                         while(frame.getContentPane().getComponentCount() > 1) {
                                             frame.getContentPane().remove(1);
                                         }
@@ -707,10 +707,10 @@ public class ChatClient implements ClientInterface {
                                 JButton removeButton = new JButton("Unblock " + block);
                                 removeButton.addActionListener(new ActionListener() {
                                     public void actionPerformed(ActionEvent e) {
-                                        SubServerInterface.writeClient("11", subOut);
-                                        SubServerInterface.writeClient(block, subOut);
+                                        writeServer("11", subOut);
+                                        writeServer(block, subOut);
                                         System.out.println(block);
-                                        SubServerInterface.writeClient("exit", subOut);
+                                        writeServer("exit", subOut);
                                         while(frame.getContentPane().getComponentCount() > 1) {
                                             frame.getContentPane().remove(1);
                                         }
@@ -842,7 +842,7 @@ public class ChatClient implements ClientInterface {
                             while (frame.getContentPane().getComponentCount() > 1) {
                                 frame.getContentPane().remove(1);
                             }
-                            SubServerInterface.writeClient("exit", subOut);
+                            writeServer("exit", subOut);
                             frame.add(settingsPanel);
                             frame.revalidate();
                             frame.repaint();

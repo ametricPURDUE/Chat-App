@@ -25,9 +25,9 @@ public class User implements UserTemplate{
         this.name = name;
         this.username = username;
         this.age = age;
-        this.userFriendsFilename = name + "_friends.txt";
+        this.userFriendsFilename = username + "_friends.txt";
         this.userMessagesFilename = username + "_messages.txt";
-        this.userBlockedFilename = name + "_blocked.txt";
+        this.userBlockedFilename = username + "_blocked.txt";
     }
 
     public User(String data) throws IncorrectInput {
@@ -42,8 +42,8 @@ public class User implements UserTemplate{
         } catch (NumberFormatException e) {
             throw new IncorrectInput("Wrong Data");
         }
-        this.userFriendsFilename = name + "_friends.txt";
-        this.userBlockedFilename = name + "_blocked.txt";
+        this.userFriendsFilename = username + "_friends.txt";
+        this.userBlockedFilename = username + "_blocked.txt";
         this.userMessagesFilename = username + "_messages.txt";
 
     }
