@@ -7,12 +7,16 @@ import java.awt.event.*;
 public class ChatMessagesScreen {
     private String username;
     private Color background;
+    private PrintWriter out;
+    private BufferedReader in;
 
     public ChatMessagesScreen(String username) {
         this.username = username;
     }
 
-    public void createMessagesScreen(JFrame frame, Color background) {
+    public void createMessagesScreen(JFrame frame, Color background, PrintWriter out, BufferedReader in) {
+        this.out = out;
+        this.in = in;
         JPanel mainPanel = new JPanel(new BorderLayout());
         this.background = background;
         JPanel searchPanel = new JPanel(new BorderLayout());
@@ -35,7 +39,7 @@ public class ChatMessagesScreen {
         conversationPanel.setLayout(new BoxLayout(conversationPanel, BoxLayout.Y_AXIS));
 
         ArrayList<String> conversations = getConversationsForUser();
-        populateConversationList(conversationPanel, conversations);
+        populateConversationList(conversationPanel, conversations, frame);
 
         JScrollPane scrollPane = new JScrollPane(conversationPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -58,22 +62,22 @@ public class ChatMessagesScreen {
                         filteredConversations.add(conversation);
                     }
                 }
-                populateConversationList(conversationPanel, filteredConversations);
+                populateConversationList(conversationPanel, filteredConversations, frame);
                 conversationPanel.revalidate();
                 conversationPanel.repaint();
             }
         });
     }
 
-    private void populateConversationList(JPanel conversationPanel, ArrayList<String> conversations) {
+    private void populateConversationList(JPanel conversationPanel, ArrayList<String> conversations, JFrame frame) {
         conversationPanel.removeAll();
         for (String conversation : conversations) {
             String displayName = getFriendlyName(conversation);
-            conversationPanel.add(createConversationPanel(conversation, displayName));
+            conversationPanel.add(createConversationPanel(conversation, displayName, frame));
             conversationPanel.add(Box.createVerticalStrut(10));
         }
     }
-    private JPanel createConversationPanel(String conversation, String displayName) {
+    private JPanel createConversationPanel(String conversation, String displayName, JFrame frame) {
         JPanel conversationPanel = new JPanel(new BorderLayout());
         conversationPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         conversationPanel.setBackground(background);
@@ -85,7 +89,7 @@ public class ChatMessagesScreen {
         JButton openChatButton = new JButton("Open Chat");
         openChatButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                openConversation(conversation);
+                openConversation(conversation, frame);
             }
         });
 
@@ -95,8 +99,58 @@ public class ChatMessagesScreen {
         return conversationPanel;
     }
 
-    private void openConversation(String conversation) {
-        System.out.println("Opening conversation: " + conversation);
+    private void openConversation(String conversation, JFrame frame) {
+        JPanel bigPanel = new JPanel(new BorderLayout());
+        JPanel conversationPanel = new JPanel();
+//        conversationPanel.setBackground(background);
+        conversationPanel.setLayout(new BoxLayout(conversationPanel, BoxLayout.Y_AXIS));
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setMaximumSize(new Dimension(4500, 20));
+        JButton send = new JButton("Send");
+        JTextField messageField = new JTextField();
+        messagePanel.add(messageField, BorderLayout.CENTER);
+        messagePanel.setBackground(background);
+        messagePanel.add(send, BorderLayout.EAST);
+        ArrayList<String> messages = new ArrayList<>();
+        System.out.println(conversation);
+        System.out.println(conversation);
+        out.println("exit");
+        out.flush();
+        out.println("3");
+        out.flush();
+        out.println(conversation);
+        out.flush();
+        int size = Integer.parseInt(ClientInterface.readServer(in));
+        System.out.println(size);
+        for (int i = 0; i < size; i++) {
+            messages.add(ClientInterface.readServer(in));
+            conversationPanel.add(new JLabel(messages.get(i)));
+            conversationPanel.add(Box.createVerticalStrut(3));
+        }
+        while (frame.getContentPane().getComponentCount() > 1) {
+            System.out.println("removed");
+            frame.remove(frame.getContentPane().getComponent(1));
+        }
+        JScrollPane scrollPane = new JScrollPane(conversationPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        bigPanel.add(scrollPane, BorderLayout.CENTER);
+        bigPanel.add(messagePanel, BorderLayout.SOUTH);
+        frame.add(bigPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
+        System.out.println("added");
+        send.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String message = messageField.getText();
+                ClientInterface.writeServer(message, out);
+                messageField.setText("");
+                if (!message.equals("exit")){
+                    conversationPanel.add(new JLabel(username + ": " + message));
+                    frame.revalidate();
+                    frame.repaint();
+                }
+            }
+        });
     }
 
     private ArrayList<String> getConversationsForUser() {

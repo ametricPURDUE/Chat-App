@@ -33,21 +33,6 @@ public class ChatClient implements ClientInterface {
         JButton messagesButton = new JButton("Messages");
         JButton settingsButton = new JButton("Settings");
 
-        messagesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (client.username != null) {
-                    while (frame.getContentPane().getComponentCount() > 1) {
-                        frame.getContentPane().remove(1);
-                    }
-                    ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
-                    messagesScreen.createMessagesScreen(frame, backgroundColor);
-                    frame.revalidate();
-                    frame.repaint();
-                } else {
-                    System.out.println("Error: Username not initialized");
-                }
-            }
-        });
 
         //adds the buttons on top of each other
         sidePanel.add(accountButton);
@@ -266,6 +251,21 @@ public class ChatClient implements ClientInterface {
                 PrintWriter subOut = new PrintWriter(subSocket.getOutputStream());
                 BufferedReader subIn = new BufferedReader(new InputStreamReader(subSocket.getInputStream()));
                 //action listener for the login button
+                messagesButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (client.username != null) {
+                            while (frame.getContentPane().getComponentCount() > 1) {
+                                frame.getContentPane().remove(1);
+                            }
+                            ChatMessagesScreen messagesScreen = new ChatMessagesScreen(client.username);
+                            messagesScreen.createMessagesScreen(frame, backgroundColor, subOut, subIn);
+                            frame.revalidate();
+                            frame.repaint();
+                        } else {
+                            System.out.println("Error: Username not initialized");
+                        }
+                    }
+                });
                 loginButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String enteredUsername = usernameInput.getText();
