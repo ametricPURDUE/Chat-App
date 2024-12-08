@@ -201,9 +201,12 @@ public class ChatClient implements ClientInterface {
 
         //create change name JComponents
         JLabel confirmNameChangeLabel = new JLabel("Change Name");
-        JTextField changeNameText = new JTextField(15);
-        JButton confirmNameChangeButton = new JButton("Confirm");
-        JTextField confirmationNameText = new JTextField("");
+        JLabel nameUsernameLabel = new JLabel("Enter Your Username");
+        JTextField nameUsernameText = new JTextField(15);
+        JLabel newNameLabel = new JLabel("Enter Your New Name");
+        JTextField newNameText = new JTextField(15);
+        JButton newNameButton = new JButton("Confirm");
+        JLabel confirmationNameLabel = new JLabel("");
 
         //create change age JComponents
         JLabel confirmAgeChangeLabel = new JLabel("Change Age");
@@ -243,10 +246,12 @@ public class ChatClient implements ClientInterface {
 
         //set the change name items to changeName panel
         changeNamePanel.add(confirmNameChangeLabel);
-        changeNamePanel.add(changeNameText);
-        changeNamePanel.add(confirmNameChangeButton);
-        changeNamePanel.add(nameBackButton);
-        changeNamePanel.add(confirmationNameText);
+        changeNamePanel.add(nameUsernameLabel);
+        changeNamePanel.add(nameUsernameText);
+        changeNamePanel.add(newNameLabel);
+        changeNamePanel.add(newNameText);
+        changeNamePanel.add(newNameButton);
+        changeNamePanel.add(confirmationNameLabel);
         changeNamePanel.setBackground(backgroundColor);
 
         //set the change age items to changeAgePanel
@@ -314,11 +319,19 @@ public class ChatClient implements ClientInterface {
         //formating for each button on the screens
         //changeName
         changeNameLayout.putConstraint(SpringLayout.WEST, confirmNameChangeLabel, 100, SpringLayout.WEST, changeNamePanel);
-        changeNameLayout.putConstraint(SpringLayout.NORTH, confirmNameChangeLabel, 100, SpringLayout.NORTH, changeNamePanel);
-        changeNameLayout.putConstraint(SpringLayout.WEST, changeNameText, 100, SpringLayout.WEST, changeNamePanel);
-        changeNameLayout.putConstraint(SpringLayout.NORTH, changeNameText, 20, SpringLayout.NORTH, confirmNameChangeLabel);
-        changeNameLayout.putConstraint(SpringLayout.WEST, confirmNameChangeButton, 170, SpringLayout.WEST, changeNameText);
-        changeNameLayout.putConstraint(SpringLayout.NORTH, confirmNameChangeButton, 15, SpringLayout.NORTH, confirmNameChangeLabel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, confirmNameChangeLabel, 50, SpringLayout.NORTH, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.WEST, nameUsernameLabel, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, nameUsernameLabel, 100, SpringLayout.NORTH, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.WEST, nameUsernameText, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, nameUsernameText, 20, SpringLayout.NORTH, nameUsernameLabel);
+        changeNameLayout.putConstraint(SpringLayout.WEST, newNameLabel, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, newNameLabel, 20, SpringLayout.NORTH, nameUsernameText);
+        changeNameLayout.putConstraint(SpringLayout.WEST, newNameText, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, newNameText, 20, SpringLayout.NORTH, newNameLabel);
+        changeNameLayout.putConstraint(SpringLayout.WEST, newNameButton, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, newNameButton, 20, SpringLayout.NORTH, newNameText);
+        changeNameLayout.putConstraint(SpringLayout.WEST, confirmationNameLabel, 100, SpringLayout.WEST, changeNamePanel);
+        changeNameLayout.putConstraint(SpringLayout.NORTH, confirmationNameLabel, 30, SpringLayout.NORTH, newNameButton);
 
         //changeAge
         changeAgeLayout.putConstraint(SpringLayout.WEST, confirmAgeChangeLabel, 100, SpringLayout.WEST, changeAgePanel);
@@ -496,9 +509,25 @@ public class ChatClient implements ClientInterface {
                     }
                 });
 
-                confirmNameChangeButton.addActionListener(new ActionListener() {
+                changeNameButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
+                        ClientInterface.writeServer("8", subOut);
+                        frame.add(changeNamePanel);
+                        frame.remove(settingsPanel);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
 
+                newNameButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        ClientInterface.writeServer(nameUsernameText.getText() + "," + newNameText.getText(), subOut);
+                        boolean successful = Boolean.parseBoolean(ClientInterface.readServer(subIn));
+                        if (successful) {
+                            confirmationNameLabel.setText("Changed Name Successfully");
+                        } else {
+                            confirmationNameLabel.setText("Error Occurred: Server Side");
+                        }
                     }
                 });
 

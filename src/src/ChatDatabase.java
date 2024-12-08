@@ -179,6 +179,19 @@ public class ChatDatabase implements ChatDatabaseInterface {
         }
     }
 
+    public boolean updateName(String username, String name) {
+        synchronized (MAIN_LOCK) {
+            readUsers();
+            int index = usernames.indexOf(username);
+            if (index != -1) {
+                getUsers(username).setName(name);
+                writeUsers();
+                return true;
+            }
+            return false;
+        }
+    }
+
     public boolean createUser(String data) throws IncorrectInput {
         synchronized(MAIN_LOCK) {
             String[] userData = data.split(",");

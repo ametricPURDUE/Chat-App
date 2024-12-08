@@ -73,6 +73,9 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                         case "7":
                             newAge(out, in);
                             break;
+                        case "8":
+                            newName(out, in);
+                            break;
                     }
                 }
 
@@ -266,5 +269,16 @@ public class ChatSubServer implements Runnable, SubServerInterface {
         System.out.println(successful);
         SubServerInterface.writeClient(String.valueOf(successful), out);
 
+    }
+
+    public static void newName(PrintWriter out, BufferedReader in) {
+        String data = SubServerInterface.readClient(in);
+        String[] parts = data.split(",");
+        if (parts.length != 2) {
+            SubServerInterface.writeClient("false", out);
+        } else {
+            boolean success = database.updateName(parts[0], parts[1]);
+            SubServerInterface.writeClient(String.valueOf(success), out);
+        }
     }
 }
