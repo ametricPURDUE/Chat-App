@@ -346,7 +346,6 @@ public class ChatClient implements ClientInterface {
         JLabel nameLabel = new JLabel("Name:");
         JLabel friendsLabel = new JLabel("Number of Friends:");
         JLabel blockedLabel = new JLabel("Number of Blocked Users:");
-        JButton backButton = new JButton("Back");
         
         // Add components to the account screen
         accountScreen.add(accountTitleLabel);
@@ -354,7 +353,6 @@ public class ChatClient implements ClientInterface {
         accountScreen.add(nameLabel);
         accountScreen.add(friendsLabel);
         accountScreen.add(blockedLabel);
-        accountScreen.add(backButton);
         
         // Set layout constraints
         accountScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, accountTitleLabel, 0, SpringLayout.HORIZONTAL_CENTER, accountScreen);
@@ -367,8 +365,6 @@ public class ChatClient implements ClientInterface {
         accountScreenLayout.putConstraint(SpringLayout.NORTH, friendsLabel, 30, SpringLayout.SOUTH, nameLabel);
         accountScreenLayout.putConstraint(SpringLayout.WEST, blockedLabel, 150, SpringLayout.WEST, accountScreen);
         accountScreenLayout.putConstraint(SpringLayout.NORTH, blockedLabel, 30, SpringLayout.SOUTH, friendsLabel);
-        accountScreenLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, backButton, 0, SpringLayout.HORIZONTAL_CENTER, accountScreen);
-        accountScreenLayout.putConstraint(SpringLayout.NORTH, backButton, 30, SpringLayout.SOUTH, blockedLabel);
 
 
         JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel};
