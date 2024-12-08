@@ -461,7 +461,7 @@ public class ChatClient implements ClientInterface {
         JPanel blockedPanel = new JPanel();
         blockedPanel.setLayout(new BoxLayout(blockedPanel, BoxLayout.Y_AXIS));
 
-        JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel, accountScreen};
+        JPanel[] jPanels = {sidePanel, loginScreen, createScreen, settingsPanel, changeAgePanel, changeNamePanel, changePasswordPanel, accountScreen, accountViewScreen}};
 
         //buttons for general settings actions
         changeNameButton.addActionListener(new ActionListener() {
