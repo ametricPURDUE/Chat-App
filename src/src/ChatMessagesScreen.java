@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ChatMessagesScreen {
+public class ChatMessagesScreen implements ChatMessageScreenInterface{
     private String username;
     private Color background;
     private PrintWriter out;
@@ -120,10 +120,10 @@ public class ChatMessagesScreen {
         out.flush();
         out.println(conversation);
         out.flush();
-        int size = Integer.parseInt(readServer(in));
+        int size = Integer.parseInt(ChatMessageScreenInterface.readServer(in));
         System.out.println(size);
         for (int i = 0; i < size; i++) {
-            messages.add(readServer(in));
+            messages.add(ChatMessageScreenInterface.readServer(in));
             conversationPanel.add(new JLabel(messages.get(i)));
             conversationPanel.add(Box.createVerticalStrut(3));
         }
@@ -175,18 +175,5 @@ public class ChatMessagesScreen {
         }
         return strippedName.trim();
     }
-    /**
-     * A method to read the message the server sends
-     *
-     * @param in the reader to use
-     * @return returns the received message from the server
-     */
-    public static String readServer(BufferedReader in) {
-        try {
-            String s = in.readLine();
-            return s;
-        } catch (IOException e) {
-            return "Socket is not connected";
-        }
-    }
+
 }
