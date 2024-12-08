@@ -50,6 +50,9 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 while (loggedIn) {
                     String choice = SubServerInterface.readClient(in);
                     System.out.println(choice);
+                    if (choice.equals("exit")){
+                        choice = SubServerInterface.readClient(in);
+                    }
                     switch (choice) {
                         case "1" : //sends all friends to client to display
                             viewFriends(out, in, username);
@@ -110,41 +113,16 @@ public class ChatSubServer implements Runnable, SubServerInterface {
     }
 
     public static void getMessages(PrintWriter out, BufferedReader in, String username) {
-        ArrayList<String> messages = database.getUsers(username).getMessages();
-        ArrayList<String> recipients = new ArrayList<>();
-        SubServerInterface.writeClient("" + messages.size(), out);
-        for (String message : messages) {
-            message = message.substring(4);
-            if (message.indexOf(username) != 0) {
-                message = message.substring(0, message.indexOf(username));
-                recipients.add(message);
-            } else {
-                System.out.println(message);
-                message = message.substring(username.length(), message.length() - 4);
-                System.out.println(message);;
-                recipients.add(message);
-            }
-            SubServerInterface.writeClient(message, out);
-            SubServerInterface.readClient(in);
-        }
+        System.out.println("mesage");
         String choice = SubServerInterface.readClient(in);
-        if (!choice.equals("exit")) {
-            int i = -1;
-            try {
-                i = Integer.parseInt(choice);
-            } catch (NumberFormatException e) {
-                System.out.println("oops#1");
-                SubServerInterface.writeClient("badInfo", out);
-                return;
+        choice = choice.substring(4);
+            if (choice.indexOf(username) == 0) {
+                choice = choice.substring(username.length(), choice.indexOf("."));
+            } else {
+                choice = choice.substring(0, username.length() - 1);
             }
-            if (i < 0 || i >= messages.size()) {
-                System.out.println("oops#2");
-                SubServerInterface.writeClient("badInfo", out);
-                return;
-            }
-            SubServerInterface.writeClient("goodInfo", out);
-            System.out.println("i = " + i);
-            ArrayList<String> message = database.readMessagesFromFile(username, recipients.get(i));
+            System.out.println("CHOIDCE : " + choice);
+            ArrayList<String> message = database.readMessagesFromFile(username, choice);
             SubServerInterface.writeClient("" + message.size(), out);
             for (int j = 0; j < message.size(); j++) {
                 SubServerInterface.writeClient(message.get(j), out);
@@ -154,10 +132,10 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 if (newMessage.equals("exit")) {
                     break;
                 } else {
-                    database.writeMessageToFile(username, recipients.get(i), newMessage);
+                    database.writeMessageToFile(username, choice, newMessage);
                 }
             }
-        }
+
     }
 
     public static void findUser(PrintWriter out, BufferedReader in, String username) {
