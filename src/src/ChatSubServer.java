@@ -41,6 +41,8 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                         System.out.println(goodInfo);
                         if (goodInfo) {
                             SubServerInterface.writeClient("goodInfo", out);
+                            String name = database.getUsers(username).getName();
+                            SubServerInterface.writeClient(name, out);
                             loginCorrect = true;
                         } else {
                             SubServerInterface.writeClient("badInfo", out);
@@ -52,10 +54,10 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                     System.out.println(choice);
                     switch (choice) {
                         case "1" : //sends all friends to client to display
-                            viewFriends(out, in, username);
+                            viewFriendsCount(out, in, username);
                             break;
                         case "2" : //sends all blocked users to client to display
-                            viewBlocked(out, in, username);
+                            viewBlockedCount(out, in, username);
                             break;
                         case "3":
                             getMessages(out, in, username);
