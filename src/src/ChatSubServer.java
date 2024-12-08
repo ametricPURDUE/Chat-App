@@ -67,6 +67,8 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                             loggedIn = false;
                             loginCorrect = false;
                             break;
+                        case "6":
+                            newPassword(out, in);
                     }
                 }
 
@@ -230,5 +232,20 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                 }
             }
         }
+    }
+
+    public static void newPassword(PrintWriter out, BufferedReader in) {
+        String data = SubServerInterface.readClient(in);
+        System.out.println(data);
+        String[] parts = data.split(",");
+        if (parts.length == 2) {
+            SubServerInterface.writeClient("valid", out);
+        } else {
+            SubServerInterface.writeClient("invalid", out);
+            return;
+        }
+        boolean successful = database.updatePassword(parts[0], parts[1]);
+        SubServerInterface.writeClient(String.valueOf(successful), out);
+
     }
 }
