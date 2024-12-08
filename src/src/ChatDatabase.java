@@ -1,3 +1,5 @@
+import com.sun.tools.javac.Main;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -158,6 +160,19 @@ public class ChatDatabase implements ChatDatabaseInterface {
                 getUsers(username).setPassword(newPassword);
                 passwords.set(index, newPassword);
                 writePasswords();
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public boolean updateAge(String username, int newAge) {
+        synchronized(MAIN_LOCK) {
+            readUsers();
+            int index = usernames.indexOf(username);
+            if (index != -1) {
+                getUsers(username).setAge(newAge);
+                writeUsers();
                 return true;
             }
             return false;

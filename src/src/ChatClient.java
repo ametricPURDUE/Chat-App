@@ -207,9 +207,12 @@ public class ChatClient implements ClientInterface {
 
         //create change age JComponents
         JLabel confirmAgeChangeLabel = new JLabel("Change Age");
-        JTextField changeAgeText = new JTextField(15);
-        JButton confirmAgeChangeButton = new JButton("Confirm");
-        JTextField confirmationAgeText = new JTextField("");
+        JLabel ageUsernameLabel = new JLabel("Enter your username");
+        JTextField ageUsernameText = new JTextField(15);
+        JLabel newAgeLabel = new JLabel("Enter New Age");
+        JTextField newAgeText = new JTextField(15);
+        JButton newAgeButton = new JButton("Confirm");
+        JLabel confirmationAgeLabel = new JLabel("");
 
         //create change password JComponents
         JLabel confirmPasswordChangeLabel = new JLabel("Change Password");
@@ -248,10 +251,13 @@ public class ChatClient implements ClientInterface {
 
         //set the change age items to changeAgePanel
         changeAgePanel.add(confirmAgeChangeLabel);
-        changeAgePanel.add(changeAgeText);
-        changeAgePanel.add(confirmAgeChangeButton);
+        changeAgePanel.add(ageUsernameLabel);
+        changeAgePanel.add(ageUsernameText);
+        changeAgePanel.add(newAgeLabel);
+        changeAgePanel.add(newAgeText);
+        changeAgePanel.add(newAgeButton);
         changeAgePanel.add(ageBackButton);
-        changeAgePanel.add(confirmationAgeText);
+        changeAgePanel.add(confirmationAgeLabel);
         changeAgePanel.setBackground(backgroundColor);
 
         //set the change password items to changePasswordPanel
@@ -317,10 +323,18 @@ public class ChatClient implements ClientInterface {
         //changeAge
         changeAgeLayout.putConstraint(SpringLayout.WEST, confirmAgeChangeLabel, 100, SpringLayout.WEST, changeAgePanel);
         changeAgeLayout.putConstraint(SpringLayout.NORTH, confirmAgeChangeLabel, 100, SpringLayout.NORTH, changeAgePanel);
-        changeAgeLayout.putConstraint(SpringLayout.WEST, changeAgeText, 100, SpringLayout.WEST, changeAgePanel);
-        changeAgeLayout.putConstraint(SpringLayout.NORTH, changeAgeText, 20, SpringLayout.NORTH, confirmAgeChangeLabel);
-        changeAgeLayout.putConstraint(SpringLayout.WEST, confirmAgeChangeButton, 170, SpringLayout.WEST, changeAgeText);
-        changeAgeLayout.putConstraint(SpringLayout.NORTH, confirmAgeChangeButton, 15, SpringLayout.NORTH, confirmAgeChangeLabel);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, ageUsernameLabel, 100, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, ageUsernameLabel, 20, SpringLayout.NORTH, confirmAgeChangeLabel);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, ageUsernameText, 100, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, ageUsernameText, 20, SpringLayout.NORTH, ageUsernameLabel);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, newAgeLabel, 100, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, newAgeLabel, 20, SpringLayout.NORTH, ageUsernameText);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, newAgeText, 100, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, newAgeText, 20, SpringLayout.NORTH, newAgeLabel);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, newAgeButton, 170, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, newAgeButton, 30, SpringLayout.NORTH, newAgeText);
+        changeAgeLayout.putConstraint(SpringLayout.WEST, confirmationAgeLabel, 100, SpringLayout.WEST, changeAgePanel);
+        changeAgeLayout.putConstraint(SpringLayout.NORTH, confirmationAgeLabel, 30, SpringLayout.NORTH, newAgeButton);
 
         //changePassword
         changePasswordLayout.putConstraint(SpringLayout.WEST, confirmPasswordChangeLabel, 100, SpringLayout.WEST, changePasswordPanel);
@@ -488,9 +502,32 @@ public class ChatClient implements ClientInterface {
                     }
                 });
 
-                confirmAgeChangeButton.addActionListener(new ActionListener() {
+                changeAgeButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
+                        ClientInterface.writeServer("7", subOut);
+                        frame.add(changeAgePanel);
+                        frame.remove(settingsPanel);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                });
 
+                newAgeButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            int age = Integer.parseInt(newAgeText.getText());
+                            if (age <= 0) {
+                                confirmationAgeLabel.setText("Please enter a positive number");
+                                return;
+                            }
+                            ClientInterface.writeServer(ageUsernameText.getText() + "," + String.valueOf(age), subOut);
+                            boolean successful = Boolean.parseBoolean(ClientInterface.readServer(subIn));
+                            if (successful) {
+                                confirmationAgeLabel.setText("Age Successfully Changed");
+                            }
+                        } catch (NumberFormatException f) {
+                            confirmationAgeLabel.setText("Please Enter a Number");
+                        }
                     }
                 });
 

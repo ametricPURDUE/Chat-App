@@ -69,6 +69,10 @@ public class ChatSubServer implements Runnable, SubServerInterface {
                             break;
                         case "6":
                             newPassword(out, in);
+                            break;
+                        case "7":
+                            newAge(out, in);
+                            break;
                     }
                 }
 
@@ -77,9 +81,11 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             throw new RuntimeException(e);
         }
     }
+
     public boolean portOpen() {
         return !running;
     }
+
     public static void viewFriends(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> friends = database.getUsers(username).getFriends();
@@ -91,6 +97,7 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             //System.out.println(s);
         }
     }
+
     public static void viewBlocked(PrintWriter out, BufferedReader in, String username) {
         database.readUsernames();
         ArrayList<User> blocked = database.getUsers(username).getBlocked();
@@ -101,6 +108,7 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             String s = SubServerInterface.readClient(in);
         }
     }
+
     public static void getMessages(PrintWriter out, BufferedReader in, String username) {
         ArrayList<String> messages = database.getUsers(username).getMessages();
         ArrayList<String> recipients = new ArrayList<>();
@@ -151,6 +159,7 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             }
         }
     }
+
     public static void findUser(PrintWriter out, BufferedReader in, String username) {
         String search = SubServerInterface.readClient(in);
         if (database.getUsers(search) != null) {
@@ -191,6 +200,7 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             SubServerInterface.writeClient("User not found", out);
         }
     }
+
     public static void createUser(PrintWriter out, BufferedReader in) {
         String newUsername = SubServerInterface.readClient(in);
         ArrayList<String> usernames = database.getUsernames();
@@ -245,6 +255,15 @@ public class ChatSubServer implements Runnable, SubServerInterface {
             return;
         }
         boolean successful = database.updatePassword(parts[0], parts[1]);
+        SubServerInterface.writeClient(String.valueOf(successful), out);
+    }
+
+    public static void newAge(PrintWriter out, BufferedReader in) {
+        String data = SubServerInterface.readClient(in);
+        String[] parts = data.split(",");
+        System.out.println("Data received");
+        boolean successful = database.updateAge(parts[0], Integer.parseInt(parts[1]));
+        System.out.println(successful);
         SubServerInterface.writeClient(String.valueOf(successful), out);
 
     }
