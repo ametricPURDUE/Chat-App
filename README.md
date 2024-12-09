@@ -1,34 +1,8 @@
 # Chat-App
-TODO:
-MainChatServer:
-make an interface
-Should be done besides that
 
-Make a login function - Nolan
-
-ChatSubServer:
-make an interface
-Write all the code to interact with client and server - nolan
-
-ChatClient:
-- Search method/code
-    - Doesn't need to be method but it will look nicer
-- Messaging method/code\n
-- View profile method\n - nolan
-- above methods need to work with server as well - nolan
-- search - Edward
-
-
-Server Stuff
-- Receive Method - Nolan
-- User messages txt file creation in the database - Pranav
-- thread safe - Edward
-- Test Cases - Parshawn
-
-RunLocalTest, 
-Read me documentation, 
-1000 word report
-
+How To Run:
+Run MainChatServer.java first, then ChatClient.java
+if you want to run multiple clients, just run ChatClient.java multiple times in tangeant
 
 Class Descriptions :
  - ChatDatabaseInterface.java:
@@ -65,6 +39,14 @@ Class Descriptions :
  - SubServerInterface.java
      - Interface for subServer
      - has static read and write methods to interact with client
+ - ChatMessageScreen.java
+     - Creates and manages the messages screen.
+     - updates the list of friends you can chat with and provides buttons fir each friend for selection 
+ -  ChatMessageScreenInterface.java
+     - The interface for ChatMessageScreen.java
+     - contains all of the abstract methods for ChatMessageScreen.java
+ - RunLocalTest.java
+     - The file containing all test cases for the application
   
 I/O and Server Testing :
 - ChatClient and ChatSubServer connection tested extensively by inputting incorrect inputs.
