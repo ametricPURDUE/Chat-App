@@ -141,8 +141,12 @@ public class ChatSubServer implements Runnable, SubServerInterface {
         choice = choice.substring(4);
             if (choice.indexOf(username) == 0) {
                 choice = choice.substring(username.length(), choice.indexOf("."));
+                System.out.println("1");
             } else {
-                choice = choice.substring(0, username.length() - 1);
+                System.out.println("choice" + choice);
+                System.out.println("username" + username);
+                choice = choice.substring(0, choice.length() - username.length() - 4);
+                System.out.println("2");
             }
             System.out.println("CHOIDCE : " + choice);
             ArrayList<String> message = database.readMessagesFromFile(username, choice);
